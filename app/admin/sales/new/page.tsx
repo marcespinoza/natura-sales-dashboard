@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
@@ -49,7 +49,7 @@ export default function NewSalePage() {
   const [clientOpen, setClientOpen] = useState(false)
   const [productOpen, setProductOpen] = useState(false)
 
-  // Fetch clients
+  // Obtener clientes
   const { data: clients } = useSWR<Profile[]>('admin-clients', async () => {
     const { data } = await supabase
       .from('profiles')
@@ -59,7 +59,7 @@ export default function NewSalePage() {
     return data || []
   })
 
-  // Fetch products
+  // Obtener productos
   const { data: products } = useSWR<Product[]>('admin-products', async () => {
     const { data } = await supabase
       .from('products')
@@ -77,7 +77,7 @@ export default function NewSalePage() {
     e.preventDefault()
 
     if (!clientId || !productId || !quantity) {
-      toast.error('Please fill in all required fields')
+      toast.error('Por favor completa todos los campos requeridos')
       return
     }
 
@@ -98,30 +98,30 @@ export default function NewSalePage() {
       .single()
 
     if (purchaseError) {
-      toast.error('Failed to create sale')
+      toast.error('Error al crear la venta')
       setIsSaving(false)
       return
     }
 
-    // Add points to client
+    // Agregar puntos al cliente
     if (pointsEarned > 0) {
       await supabase
         .from('points_ledger')
         .insert({
           user_id: clientId,
           change: pointsEarned,
-          reason: `Purchase: ${selectedProduct?.name}`,
+          reason: `Compra: ${selectedProduct?.name}`,
           purchase_id: purchase.id,
         })
 
-      // Update client's points balance
+      // Actualizar balance de puntos del cliente
       await supabase.rpc('increment_points', {
         user_id: clientId,
         points_change: pointsEarned,
       })
     }
 
-    toast.success('Sale recorded successfully')
+    toast.success('Venta registrada exitosamente')
     router.push('/admin/sales')
   }
 
@@ -134,30 +134,30 @@ export default function NewSalePage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">New Sale</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Nueva Venta</h1>
           <p className="text-muted-foreground">
-            Record a new product sale
+            Registra una nueva venta de producto
           </p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Sale Details */}
+          {/* Detalles de la Venta */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5" />
-                Sale Details
+                Detalles de la Venta
               </CardTitle>
               <CardDescription>
-                Enter the sale information
+                Ingresa la información de la venta
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Client Selection */}
+              {/* Selección de Cliente */}
               <div className="space-y-2">
-                <Label>Client *</Label>
+                <Label>Cliente *</Label>
                 <Popover open={clientOpen} onOpenChange={setClientOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -167,16 +167,16 @@ export default function NewSalePage() {
                       className="w-full justify-between"
                     >
                       {clientId
-                        ? clients?.find((c) => c.id === clientId)?.full_name || 'Select client...'
-                        : 'Select client...'}
+                        ? clients?.find((c) => c.id === clientId)?.full_name || 'Seleccionar cliente...'
+                        : 'Seleccionar cliente...'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0" align="start">
                     <Command>
-                      <CommandInput placeholder="Search clients..." />
+                      <CommandInput placeholder="Buscar clientes..." />
                       <CommandList>
-                        <CommandEmpty>No clients found.</CommandEmpty>
+                        <CommandEmpty>No se encontraron clientes.</CommandEmpty>
                         <CommandGroup>
                           {clients?.map((client) => (
                             <CommandItem
@@ -193,7 +193,7 @@ export default function NewSalePage() {
                                   clientId === client.id ? 'opacity-100' : 'opacity-0'
                                 )}
                               />
-                              {client.full_name || 'No name'}
+                              {client.full_name || 'Sin nombre'}
                             </CommandItem>
                           ))}
                         </CommandGroup>
@@ -203,9 +203,9 @@ export default function NewSalePage() {
                 </Popover>
               </div>
 
-              {/* Product Selection */}
+              {/* Selección de Producto */}
               <div className="space-y-2">
-                <Label>Product *</Label>
+                <Label>Producto *</Label>
                 <Popover open={productOpen} onOpenChange={setProductOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -215,16 +215,16 @@ export default function NewSalePage() {
                       className="w-full justify-between"
                     >
                       {productId
-                        ? products?.find((p) => p.id === productId)?.name || 'Select product...'
-                        : 'Select product...'}
+                        ? products?.find((p) => p.id === productId)?.name || 'Seleccionar producto...'
+                        : 'Seleccionar producto...'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0" align="start">
                     <Command>
-                      <CommandInput placeholder="Search products..." />
+                      <CommandInput placeholder="Buscar productos..." />
                       <CommandList>
-                        <CommandEmpty>No products found.</CommandEmpty>
+                        <CommandEmpty>No se encontraron productos.</CommandEmpty>
                         <CommandGroup>
                           {products?.map((product) => (
                             <CommandItem
@@ -256,9 +256,9 @@ export default function NewSalePage() {
                 </Popover>
               </div>
 
-              {/* Quantity */}
+              {/* Cantidad */}
               <div className="space-y-2">
-                <Label htmlFor="quantity">Quantity *</Label>
+                <Label htmlFor="quantity">Cantidad *</Label>
                 <Input
                   id="quantity"
                   type="number"
@@ -268,39 +268,39 @@ export default function NewSalePage() {
                 />
               </div>
 
-              {/* Notes */}
+              {/* Notas */}
               <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="notes">Notas</Label>
                 <Textarea
                   id="notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Any additional notes..."
+                  placeholder="Notas adicionales..."
                   rows={3}
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Summary */}
+          {/* Resumen */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>Resumen del Pedido</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {selectedProduct ? (
                 <>
                   <div className="rounded-lg bg-muted p-4 space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Product</span>
+                      <span className="text-muted-foreground">Producto</span>
                       <span className="font-medium">{selectedProduct.name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Unit Price</span>
+                      <span className="text-muted-foreground">Precio Unitario</span>
                       <span>{formatCurrency(selectedProduct.price)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Quantity</span>
+                      <span className="text-muted-foreground">Cantidad</span>
                       <span>{quantity || 0}</span>
                     </div>
                     <div className="border-t pt-3 flex justify-between">
@@ -308,7 +308,7 @@ export default function NewSalePage() {
                       <span className="text-lg font-bold">{formatCurrency(totalPrice)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Points Earned</span>
+                      <span className="text-muted-foreground">Puntos a Ganar</span>
                       <span className="text-chart-3 font-medium">+{pointsEarned}</span>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function NewSalePage() {
                 <div className="rounded-lg bg-muted p-8 text-center">
                   <ShoppingCart className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-muted-foreground">
-                    Select a product to see the summary
+                    Selecciona un producto para ver el resumen
                   </p>
                 </div>
               )}
@@ -328,7 +328,7 @@ export default function NewSalePage() {
                 disabled={isSaving || !clientId || !productId}
               >
                 {isSaving ? <Spinner className="mr-2" /> : null}
-                Record Sale
+                Registrar Venta
               </Button>
             </CardContent>
           </Card>

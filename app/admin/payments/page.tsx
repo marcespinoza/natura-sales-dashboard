@@ -15,16 +15,16 @@ const paymentMethodIcons = {
 }
 
 const paymentMethodLabels = {
-  cash: 'Cash',
-  transfer: 'Transfer',
-  card: 'Card',
-  other: 'Other',
+  cash: 'Efectivo',
+  transfer: 'Transferencia',
+  card: 'Tarjeta',
+  other: 'Otro',
 }
 
 export default async function AdminPaymentsPage() {
   const supabase = await createClient()
 
-  // Get all payments with purchase and client info
+  // Obtener todos los pagos con información de compra y cliente
   const { data: payments } = await supabase
     .from('payments')
     .select(`
@@ -40,7 +40,7 @@ export default async function AdminPaymentsPage() {
   const allPayments = payments || []
   const totalCollected = allPayments.reduce((sum, p) => sum + Number(p.amount), 0)
 
-  // Get outstanding balance
+  // Obtener saldo pendiente
   const { data: purchases } = await supabase
     .from('purchases')
     .select('total_price, payments(amount)')
@@ -56,24 +56,24 @@ export default async function AdminPaymentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Payments</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Pagos</h1>
           <p className="text-muted-foreground">
-            Track and record client payments
+            Registra y da seguimiento a los pagos de clientes
           </p>
         </div>
         <Button asChild>
           <Link href="/admin/payments/new">
             <Plus className="mr-2 h-4 w-4" />
-            Record Payment
+            Registrar Pago
           </Link>
         </Button>
       </div>
 
-      {/* Summary */}
+      {/* Resumen */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Collected</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Cobrado</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-status-paid">{formatCurrency(totalCollected)}</div>
@@ -81,7 +81,7 @@ export default async function AdminPaymentsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+            <CardTitle className="text-sm font-medium">Pendiente</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-status-pending">{formatCurrency(totalOutstanding)}</div>
@@ -89,7 +89,7 @@ export default async function AdminPaymentsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Collection Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Tasa de Cobro</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -99,12 +99,12 @@ export default async function AdminPaymentsPage() {
         </Card>
       </div>
 
-      {/* Payments Table */}
+      {/* Tabla de Pagos */}
       <Card>
         <CardHeader>
-          <CardTitle>Payment History</CardTitle>
+          <CardTitle>Historial de Pagos</CardTitle>
           <CardDescription>
-            {allPayments.length} {allPayments.length === 1 ? 'payment' : 'payments'} recorded
+            {allPayments.length} {allPayments.length === 1 ? 'pago registrado' : 'pagos registrados'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -112,12 +112,12 @@ export default async function AdminPaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>Notes</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead>Método</TableHead>
+                  <TableHead className="text-right">Monto</TableHead>
+                  <TableHead>Notas</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -130,10 +130,10 @@ export default async function AdminPaymentsPage() {
                         {formatDate(payment.created_at)}
                       </TableCell>
                       <TableCell>
-                        {payment.purchase?.client?.full_name || 'Unknown'}
+                        {payment.purchase?.client?.full_name || 'Desconocido'}
                       </TableCell>
                       <TableCell>
-                        {payment.purchase?.product?.name || 'Unknown'}
+                        {payment.purchase?.product?.name || 'Desconocido'}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="gap-1">
@@ -155,14 +155,14 @@ export default async function AdminPaymentsPage() {
           ) : (
             <div className="text-center py-12">
               <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No payments yet</p>
+              <p className="text-lg font-medium">Aún no hay pagos</p>
               <p className="text-muted-foreground mb-4">
-                Record your first payment to get started
+                Registra tu primer pago para comenzar
               </p>
               <Button asChild>
                 <Link href="/admin/payments/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  Record Payment
+                  Registrar Pago
                 </Link>
               </Button>
             </div>
