@@ -15,37 +15,37 @@ import {
 
 const navItems = [
   {
-    title: 'Overview',
+    title: 'Resumen',
     href: '/admin',
     icon: LayoutDashboard,
   },
   {
-    title: 'Clients',
+    title: 'Clientes',
     href: '/admin/clients',
     icon: Users,
   },
   {
-    title: 'Products',
+    title: 'Productos',
     href: '/admin/products',
     icon: Package,
   },
   {
-    title: 'Sales',
+    title: 'Ventas',
     href: '/admin/sales',
     icon: ShoppingCart,
   },
   {
-    title: 'Payments',
+    title: 'Pagos',
     href: '/admin/payments',
     icon: CreditCard,
   },
   {
-    title: 'Notifications',
+    title: 'Notificaciones',
     href: '/admin/notifications',
     icon: Bell,
   },
   {
-    title: 'Settings',
+    title: 'Configuración',
     href: '/admin/settings',
     icon: Settings,
   },

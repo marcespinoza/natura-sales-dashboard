@@ -99,9 +99,9 @@ export default function LoginPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
             <Leaf className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold text-balance">Welcome to Natura</CardTitle>
+          <CardTitle className="text-2xl font-bold text-balance">Bienvenida a Natura</CardTitle>
           <CardDescription className="text-pretty">
-            Sign in to access your consultant portal
+            Inicia sesión para acceder a tu portal de consultora
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -114,11 +114,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Correo electrónico</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="tu@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -126,11 +126,11 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Contraseña</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Ingresa tu contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -139,7 +139,7 @@ export default function LoginPage() {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? <Spinner className="mr-2" /> : null}
-              Sign In
+              Iniciar Sesión
             </Button>
           </form>
 
@@ -148,7 +148,7 @@ export default function LoginPage() {
               <Separator className="w-full" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-card px-2 text-muted-foreground">O continúa con</span>
             </div>
           </div>
 
@@ -200,9 +200,9 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-muted-foreground text-center">
-            {"Don't have an account? "}
+            {"¿No tienes cuenta? "}
             <Link href="/auth/sign-up" className="text-primary hover:underline font-medium">
-              Sign up
+              Regístrate
             </Link>
           </div>
         </CardFooter>

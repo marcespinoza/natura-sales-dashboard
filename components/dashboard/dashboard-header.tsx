@@ -76,7 +76,7 @@ export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderP
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {profile?.full_name || 'User'}
+                    {profile?.full_name || 'Usuario'}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {user.email}
@@ -87,13 +87,13 @@ export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderP
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/profile" className="cursor-pointer">
                   <UserIcon className="mr-2 h-4 w-4" />
-                  Profile
+                  Perfil
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings" className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                  Configuración
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -103,7 +103,7 @@ export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderP
                 className="cursor-pointer text-destructive focus:text-destructive"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {isLoggingOut ? 'Signing out...' : 'Sign out'}
+                {isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

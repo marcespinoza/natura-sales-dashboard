@@ -31,17 +31,17 @@ export default async function PurchasesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Purchase History</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Historial de Compras</h1>
         <p className="text-muted-foreground">
-          View all your Natura product purchases
+          Ve todas tus compras de productos Natura
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Purchases</CardTitle>
+          <CardTitle>Todas las Compras</CardTitle>
           <CardDescription>
-            {allPurchases.length} total {allPurchases.length === 1 ? 'purchase' : 'purchases'}
+            {allPurchases.length} {allPurchases.length === 1 ? 'compra' : 'compras'} en total
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -49,13 +49,13 @@ export default async function PurchasesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead className="text-center">Qty</TableHead>
-                  <TableHead className="text-right">Unit Price</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead className="text-center">Cant.</TableHead>
+                  <TableHead className="text-right">Precio Unit.</TableHead>
                   <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right">Paid</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-right">Pagado</TableHead>
+                  <TableHead className="text-center">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -100,9 +100,9 @@ export default async function PurchasesPage() {
           ) : (
             <div className="text-center py-12">
               <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No purchases yet</p>
+              <p className="text-lg font-medium">Sin compras aún</p>
               <p className="text-muted-foreground">
-                Your purchase history will appear here once you make your first order
+                Tu historial de compras aparecerá aquí cuando hagas tu primer pedido
               </p>
             </div>
           )}

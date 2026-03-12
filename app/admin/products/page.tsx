@@ -81,7 +81,7 @@ export default function ProductsPage() {
 
   async function handleSave() {
     if (!name || !price) {
-      toast.error('Name and price are required')
+      toast.error('Nombre y precio son requeridos')
       return
     }
 
@@ -103,9 +103,9 @@ export default function ProductsPage() {
         .eq('id', editingProduct.id)
 
       if (error) {
-        toast.error('Failed to update product')
+        toast.error('Error al actualizar producto')
       } else {
-        toast.success('Product updated')
+        toast.success('Producto actualizado')
         setEditingProduct(null)
       }
     } else {
@@ -114,9 +114,9 @@ export default function ProductsPage() {
         .insert(productData)
 
       if (error) {
-        toast.error('Failed to add product')
+        toast.error('Error al agregar producto')
       } else {
-        toast.success('Product added')
+        toast.success('Producto agregado')
         setIsAddOpen(false)
       }
     }
@@ -130,12 +130,12 @@ export default function ProductsPage() {
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="name">Product Name *</Label>
+          <Label htmlFor="name">Nombre del Producto *</Label>
           <Input
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g., Essential Oil - Lavender"
+            placeholder="ej., Aceite Esencial - Lavanda"
           />
         </div>
         <div className="space-y-2">
@@ -144,13 +144,13 @@ export default function ProductsPage() {
             id="sku"
             value={sku}
             onChange={(e) => setSku(e.target.value)}
-            placeholder="e.g., NAT-EO-001"
+            placeholder="ej., NAT-AE-001"
           />
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="price">Price *</Label>
+          <Label htmlFor="price">Precio *</Label>
           <Input
             id="price"
             type="number"
@@ -162,22 +162,22 @@ export default function ProductsPage() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category">Categoría</Label>
           <Input
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g., Essential Oils"
+            placeholder="ej., Aceites Esenciales"
           />
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">Descripción</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Product description..."
+          placeholder="Descripción del producto..."
           rows={3}
         />
       </div>
@@ -187,7 +187,7 @@ export default function ProductsPage() {
           checked={active}
           onCheckedChange={setActive}
         />
-        <Label htmlFor="active">Active (visible in product list)</Label>
+        <Label htmlFor="active">Activo (visible en lista de productos)</Label>
       </div>
     </div>
   )
@@ -196,9 +196,9 @@ export default function ProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Products</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Productos</h1>
           <p className="text-muted-foreground">
-            Manage your Natura product catalog
+            Administra tu catálogo de productos Natura
           </p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={(open) => {
@@ -208,24 +208,24 @@ export default function ProductsPage() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Product
+              Agregar Producto
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Add New Product</DialogTitle>
+              <DialogTitle>Agregar Nuevo Producto</DialogTitle>
               <DialogDescription>
-                Add a new product to your catalog
+                Agrega un nuevo producto a tu catálogo
               </DialogDescription>
             </DialogHeader>
             <ProductForm />
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddOpen(false)}>
-                Cancel
+                Cancelar
               </Button>
               <Button onClick={handleSave} disabled={isSaving}>
                 {isSaving ? <Spinner className="mr-2" /> : null}
-                Add Product
+                Agregar Producto
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -238,7 +238,7 @@ export default function ProductsPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
+              placeholder="Buscar productos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -250,9 +250,9 @@ export default function ProductsPage() {
       {/* Products Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Product Catalog</CardTitle>
+          <CardTitle>Catálogo de Productos</CardTitle>
           <CardDescription>
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'producto' : 'productos'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -264,11 +264,11 @@ export default function ProductsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
+                  <TableHead>Producto</TableHead>
                   <TableHead>SKU</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Price</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead>Categoría</TableHead>
+                  <TableHead className="text-right">Precio</TableHead>
+                  <TableHead className="text-center">Estado</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -298,7 +298,7 @@ export default function ProductsPage() {
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge variant={product.active ? 'default' : 'secondary'}>
-                        {product.active ? 'Active' : 'Inactive'}
+                        {product.active ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -319,19 +319,19 @@ export default function ProductsPage() {
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[500px]">
                           <DialogHeader>
-                            <DialogTitle>Edit Product</DialogTitle>
+                            <DialogTitle>Editar Producto</DialogTitle>
                             <DialogDescription>
-                              Update product information
+                              Actualiza la información del producto
                             </DialogDescription>
                           </DialogHeader>
                           <ProductForm />
                           <DialogFooter>
                             <Button variant="outline" onClick={() => setEditingProduct(null)}>
-                              Cancel
+                              Cancelar
                             </Button>
                             <Button onClick={handleSave} disabled={isSaving}>
                               {isSaving ? <Spinner className="mr-2" /> : null}
-                              Save Changes
+                              Guardar Cambios
                             </Button>
                           </DialogFooter>
                         </DialogContent>
@@ -344,9 +344,9 @@ export default function ProductsPage() {
           ) : (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No products found</p>
+              <p className="text-lg font-medium">No se encontraron productos</p>
               <p className="text-muted-foreground">
-                {searchQuery ? 'Try a different search term' : 'Add your first product to get started'}
+                {searchQuery ? 'Prueba con otro término de búsqueda' : 'Agrega tu primer producto para comenzar'}
               </p>
             </div>
           )}

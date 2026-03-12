@@ -14,16 +14,16 @@ export default function SignUpSuccessPage() {
               <CheckCircle className="absolute -bottom-1 -right-1 h-5 w-5 text-accent-foreground bg-accent rounded-full" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-balance">Check your email</CardTitle>
+          <CardTitle className="text-2xl font-bold text-balance">Revisa tu correo</CardTitle>
           <CardDescription className="text-pretty">
-            {"We've sent you a confirmation link to verify your email address"}
+            Te hemos enviado un enlace de confirmación para verificar tu correo electrónico
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
             <p className="text-pretty">
-              Click the link in the email to complete your registration. 
-              If you {"don't"} see it, check your spam folder.
+              Haz clic en el enlace del correo para completar tu registro. 
+              Si no lo ves, revisa tu carpeta de spam.
             </p>
           </div>
         </CardContent>
@@ -31,7 +31,7 @@ export default function SignUpSuccessPage() {
           <Button asChild variant="outline" className="w-full">
             <Link href="/auth/login">
               <Leaf className="mr-2 h-4 w-4" />
-              Back to Sign In
+              Volver a Iniciar Sesión
             </Link>
           </Button>
         </CardFooter>

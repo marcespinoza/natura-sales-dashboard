@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ShoppingBag, CreditCard, Award, TrendingUp, AlertCircle } from 'lucide-react'
+import { ShoppingBag, CreditCard, Award, AlertCircle } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { PaymentStatusBadge } from '@/components/dashboard/payment-status-badge'
 import Link from 'next/link'
@@ -59,10 +58,10 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          Welcome back, {profile?.full_name?.split(' ')[0] || 'there'}!
+          ¡Bienvenida de nuevo, {profile?.full_name?.split(' ')[0] || 'amiga'}!
         </h1>
         <p className="text-muted-foreground">
-          {"Here's an overview of your Natura account"}
+          Aquí tienes un resumen de tu cuenta Natura
         </p>
       </div>
 
@@ -70,33 +69,33 @@ export default async function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Gastado</CardTitle>
             <ShoppingBag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalSpent)}</div>
             <p className="text-xs text-muted-foreground">
-              {monthlyPurchases || 0} purchases this month
+              {monthlyPurchases || 0} compras este mes
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Pagado</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-status-paid">{formatCurrency(totalPaid)}</div>
             <p className="text-xs text-muted-foreground">
-              Payments completed
+              Pagos completados
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+            <CardTitle className="text-sm font-medium">Pendiente</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -104,14 +103,14 @@ export default async function DashboardPage() {
               {formatCurrency(totalDue)}
             </div>
             <p className="text-xs text-muted-foreground">
-              {totalDue > 0 ? 'Amount due' : 'All paid up!'}
+              {totalDue > 0 ? 'Monto por pagar' : '¡Todo pagado!'}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Loyalty Points</CardTitle>
+            <CardTitle className="text-sm font-medium">Puntos de Lealtad</CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -119,7 +118,7 @@ export default async function DashboardPage() {
               {profile?.points_balance?.toLocaleString() || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Available points
+              Puntos disponibles
             </p>
           </CardContent>
         </Card>
@@ -133,13 +132,13 @@ export default async function DashboardPage() {
               <AlertCircle className="h-5 w-5 text-status-pending" />
             </div>
             <div className="flex-1">
-              <p className="font-medium">You have an outstanding balance</p>
+              <p className="font-medium">Tienes un saldo pendiente</p>
               <p className="text-sm text-muted-foreground">
-                {formatCurrency(totalDue)} pending across your purchases
+                {formatCurrency(totalDue)} pendiente en tus compras
               </p>
             </div>
             <Button asChild variant="outline">
-              <Link href="/dashboard/payments">View Details</Link>
+              <Link href="/dashboard/payments">Ver Detalles</Link>
             </Button>
           </CardContent>
         </Card>
@@ -149,11 +148,11 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Recent Purchases</CardTitle>
-            <CardDescription>Your latest Natura orders</CardDescription>
+            <CardTitle>Compras Recientes</CardTitle>
+            <CardDescription>Tus últimos pedidos Natura</CardDescription>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/dashboard/purchases">View All</Link>
+            <Link href="/dashboard/purchases">Ver Todas</Link>
           </Button>
         </CardHeader>
         <CardContent>
@@ -175,7 +174,7 @@ export default async function DashboardPage() {
                       <div>
                         <p className="font-medium">{purchase.product?.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {formatDate(purchase.created_at)} · Qty: {purchase.quantity}
+                          {formatDate(purchase.created_at)} · Cant: {purchase.quantity}
                         </p>
                       </div>
                     </div>
@@ -190,9 +189,9 @@ export default async function DashboardPage() {
           ) : (
             <div className="text-center py-8">
               <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No purchases yet</p>
+              <p className="text-muted-foreground">Sin compras aún</p>
               <p className="text-sm text-muted-foreground">
-                Your purchase history will appear here
+                Tu historial de compras aparecerá aquí
               </p>
             </div>
           )}

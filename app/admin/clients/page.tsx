@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Users, Mail, Phone, Award, ShoppingBag, DollarSign } from 'lucide-react'
+import { Users, Phone, Award, ShoppingBag, DollarSign } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/format'
 import Link from 'next/link'
 
@@ -46,9 +46,9 @@ export default async function ClientsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Clientes</h1>
           <p className="text-muted-foreground">
-            Manage your client accounts and balances
+            Administra las cuentas y saldos de tus clientes
           </p>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default async function ClientsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -66,7 +66,7 @@ export default async function ClientsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">Ventas Totales</CardTitle>
             <ShoppingBag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -77,7 +77,7 @@ export default async function ClientsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Collected</CardTitle>
+            <CardTitle className="text-sm font-medium">Cobrado</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -88,7 +88,7 @@ export default async function ClientsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+            <CardTitle className="text-sm font-medium">Pendiente</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -102,9 +102,9 @@ export default async function ClientsPage() {
       {/* Clients Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Clients</CardTitle>
+          <CardTitle>Todos los Clientes</CardTitle>
           <CardDescription>
-            {clientsWithStats.length} registered {clientsWithStats.length === 1 ? 'client' : 'clients'}
+            {clientsWithStats.length} {clientsWithStats.length === 1 ? 'cliente registrado' : 'clientes registrados'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -112,13 +112,13 @@ export default async function ClientsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead className="text-center">Purchases</TableHead>
-                  <TableHead className="text-right">Total Spent</TableHead>
-                  <TableHead className="text-right">Paid</TableHead>
-                  <TableHead className="text-right">Due</TableHead>
-                  <TableHead className="text-center">Points</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Contacto</TableHead>
+                  <TableHead className="text-center">Compras</TableHead>
+                  <TableHead className="text-right">Total Gastado</TableHead>
+                  <TableHead className="text-right">Pagado</TableHead>
+                  <TableHead className="text-right">Adeudo</TableHead>
+                  <TableHead className="text-center">Puntos</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -127,9 +127,9 @@ export default async function ClientsPage() {
                   <TableRow key={client.id}>
                     <TableCell>
                       <div>
-                        <p className="font-medium">{client.full_name || 'No name'}</p>
+                        <p className="font-medium">{client.full_name || 'Sin nombre'}</p>
                         <p className="text-xs text-muted-foreground">
-                          Joined {formatDate(client.created_at)}
+                          Se unió el {formatDate(client.created_at)}
                         </p>
                       </div>
                     </TableCell>
@@ -163,7 +163,7 @@ export default async function ClientsPage() {
                     </TableCell>
                     <TableCell>
                       <Button asChild variant="ghost" size="sm">
-                        <Link href={`/admin/clients/${client.id}`}>View</Link>
+                        <Link href={`/admin/clients/${client.id}`}>Ver</Link>
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -173,9 +173,9 @@ export default async function ClientsPage() {
           ) : (
             <div className="text-center py-12">
               <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No clients yet</p>
+              <p className="text-lg font-medium">Sin clientes aún</p>
               <p className="text-muted-foreground">
-                Clients will appear here once they sign up
+                Los clientes aparecerán aquí cuando se registren
               </p>
             </div>
           )}

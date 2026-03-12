@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import useSWR from 'swr'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
 import type { Notification } from '@/lib/types'
 import { Bell, Info, Tag, CreditCard, Award, Check } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
+import { formatRelativeTime } from '@/lib/format'
 
 interface NotificationBellProps {
   userId: string
@@ -90,11 +90,11 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between border-b px-4 py-3">
-          <h4 className="font-semibold">Notifications</h4>
+          <h4 className="font-semibold">Notificaciones</h4>
           {unreadCount > 0 && (
             <Button variant="ghost" size="sm" onClick={markAllAsRead}>
               <Check className="mr-1 h-3 w-3" />
-              Mark all read
+              Marcar todas leídas
             </Button>
           )}
         </div>
@@ -127,7 +127,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
                         {notification.message}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                        {formatRelativeTime(notification.created_at)}
                       </p>
                     </div>
                     {!notification.read && (
@@ -140,7 +140,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
           ) : (
             <div className="flex flex-col items-center justify-center h-full py-8 text-center">
               <Bell className="h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">No notifications yet</p>
+              <p className="text-sm text-muted-foreground">Sin notificaciones aún</p>
             </div>
           )}
         </ScrollArea>

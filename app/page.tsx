@@ -17,10 +17,10 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" asChild>
-              <Link href="/auth/login">Sign In</Link>
+              <Link href="/auth/login">Iniciar Sesión</Link>
             </Button>
             <Button asChild>
-              <Link href="/auth/sign-up">Get Started</Link>
+              <Link href="/auth/sign-up">Registrarse</Link>
             </Button>
           </div>
         </div>
@@ -31,23 +31,23 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-20 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-              Your Personal{' '}
+              Tu Portal Personal de{' '}
               <span className="text-primary">Natura</span>{' '}
-              Consultant Portal
+              Consultora
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Track your purchases, manage payments, and earn loyalty points. 
-              Everything you need to stay connected with your Natura consultant.
+              Controla tus compras, administra pagos y gana puntos de lealtad. 
+              Todo lo que necesitas para estar conectada con tu consultora Natura.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Button size="lg" asChild>
                 <Link href="/auth/sign-up">
-                  Create Account
+                  Crear Cuenta
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/auth/login">Sign In</Link>
+                <Link href="/auth/login">Iniciar Sesión</Link>
               </Button>
             </div>
           </div>
@@ -61,24 +61,24 @@ export default function HomePage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
                   <ShoppingBag className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle>Purchase History</CardTitle>
+                <CardTitle>Historial de Compras</CardTitle>
                 <CardDescription className="text-pretty">
-                  View all your Natura product purchases in one place with detailed order information
+                  Ve todas tus compras de productos Natura en un solo lugar con información detallada de cada pedido
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-2">
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Complete order history
+                    Historial completo de pedidos
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Product details and prices
+                    Detalles y precios de productos
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Download statements
+                    Descarga de estados de cuenta
                   </li>
                 </ul>
               </CardContent>
@@ -89,24 +89,24 @@ export default function HomePage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 mb-2">
                   <CreditCard className="h-6 w-6 text-accent" />
                 </div>
-                <CardTitle>Payment Tracking</CardTitle>
+                <CardTitle>Seguimiento de Pagos</CardTitle>
                 <CardDescription className="text-pretty">
-                  Stay on top of your payments with clear status indicators and balance tracking
+                  Mantente al día con tus pagos con indicadores claros de estado y seguimiento de saldos
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-2">
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-accent" />
-                    Real-time payment status
+                    Estado de pagos en tiempo real
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-accent" />
-                    Outstanding balance alerts
+                    Alertas de saldo pendiente
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-accent" />
-                    Payment history
+                    Historial de pagos
                   </li>
                 </ul>
               </CardContent>
@@ -117,24 +117,24 @@ export default function HomePage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/20 mb-2">
                   <Award className="h-6 w-6 text-chart-3" />
                 </div>
-                <CardTitle>Loyalty Points</CardTitle>
+                <CardTitle>Puntos de Lealtad</CardTitle>
                 <CardDescription className="text-pretty">
-                  Earn points on every purchase and track your rewards balance
+                  Gana puntos en cada compra y sigue el saldo de tus recompensas
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="text-sm text-muted-foreground space-y-2">
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-chart-3" />
-                    Automatic point earnings
+                    Acumulación automática de puntos
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-chart-3" />
-                    Points history ledger
+                    Historial de movimientos
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-chart-3" />
-                    Redemption tracking
+                    Seguimiento de canjes
                   </li>
                 </ul>
               </CardContent>
@@ -147,15 +147,15 @@ export default function HomePage() {
           <Card className="bg-primary text-primary-foreground">
             <CardContent className="py-12 text-center">
               <h2 className="text-2xl md:text-3xl font-bold mb-4 text-balance">
-                Ready to get started?
+                ¿Lista para comenzar?
               </h2>
               <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto text-pretty">
-                Create your account today and start tracking all your Natura purchases 
-                in one convenient place.
+                Crea tu cuenta hoy y comienza a controlar todas tus compras Natura 
+                en un solo lugar conveniente.
               </p>
               <Button size="lg" variant="secondary" asChild>
                 <Link href="/auth/sign-up">
-                  Create Free Account
+                  Crear Cuenta Gratis
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -167,7 +167,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Natura Consultant Portal. Built with care.</p>
+          <p>Portal de Consultora Natura. Hecho con cariño.</p>
         </div>
       </footer>
     </div>

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
-import { Settings, User, Shield } from 'lucide-react'
+import { User, Shield } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Profile } from '@/lib/types'
 
@@ -71,9 +71,9 @@ export default function AdminSettingsPage() {
     setIsSaving(false)
 
     if (error) {
-      toast.error('Failed to update settings')
+      toast.error('Error al actualizar configuración')
     } else {
-      toast.success('Settings updated successfully')
+      toast.success('Configuración actualizada correctamente')
       router.refresh()
     }
   }
@@ -89,9 +89,9 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Configuración</h1>
         <p className="text-muted-foreground">
-          Manage your admin account settings
+          Administra la configuración de tu cuenta de admin
         </p>
       </div>
 
@@ -101,26 +101,26 @@ export default function AdminSettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Admin Profile
+              Perfil de Admin
             </CardTitle>
             <CardDescription>
-              Update your account information
+              Actualiza la información de tu cuenta
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">Nombre Completo</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Admin Name"
+                  placeholder="Nombre del Admin"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Correo Electrónico</Label>
                 <Input
                   id="email"
                   type="email"
@@ -131,19 +131,19 @@ export default function AdminSettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Número de Teléfono</Label>
                 <Input
                   id="phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+52 (55) 1234-5678"
                 />
               </div>
 
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? <Spinner className="mr-2" /> : null}
-                Save Changes
+                Guardar Cambios
               </Button>
             </form>
           </CardContent>
@@ -154,7 +154,7 @@ export default function AdminSettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              Account Status
+              Estado de la Cuenta
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -164,9 +164,9 @@ export default function AdminSettingsPage() {
                   <Shield className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium">Administrator</p>
+                  <p className="font-medium">Administrador</p>
                   <p className="text-sm text-muted-foreground">
-                    Full access to all features
+                    Acceso completo a todas las funciones
                   </p>
                 </div>
               </div>
@@ -174,14 +174,14 @@ export default function AdminSettingsPage() {
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Role</span>
+                <span className="text-muted-foreground">Rol</span>
                 <span className="font-medium capitalize">{profile?.role}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Account Created</span>
+                <span className="text-muted-foreground">Cuenta Creada</span>
                 <span className="font-medium">
                   {profile?.created_at
-                    ? new Date(profile.created_at).toLocaleDateString()
+                    ? new Date(profile.created_at).toLocaleDateString('es-MX')
                     : '-'}
                 </span>
               </div>

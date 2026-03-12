@@ -4,22 +4,22 @@ import { useState } from 'react'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { FileText, Download, Calendar, Filter } from 'lucide-react'
+import { FileText, Calendar, Filter } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { PaymentStatusBadge } from '@/components/dashboard/payment-status-badge'
 import type { PaymentStatus } from '@/lib/types'
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 const months = [
-  { value: '0', label: 'This Month' },
-  { value: '1', label: 'Last Month' },
-  { value: '2', label: '2 Months Ago' },
-  { value: '3', label: '3 Months Ago' },
-  { value: '6', label: '6 Months Ago' },
-  { value: '12', label: 'This Year' },
+  { value: '0', label: 'Este Mes' },
+  { value: '1', label: 'Mes Pasado' },
+  { value: '2', label: 'Hace 2 Meses' },
+  { value: '3', label: 'Hace 3 Meses' },
+  { value: '6', label: 'Hace 6 Meses' },
+  { value: '12', label: 'Este Año' },
 ]
 
 export default function StatementsPage() {
@@ -87,15 +87,15 @@ export default function StatementsPage() {
   const totalDue = totalPurchases - totalPaid
 
   const periodLabel = data?.startDate && data?.endDate
-    ? `${format(data.startDate, 'MMM d, yyyy')} - ${format(data.endDate, 'MMM d, yyyy')}`
-    : 'Loading...'
+    ? `${format(data.startDate, 'd MMM yyyy', { locale: es })} - ${format(data.endDate, 'd MMM yyyy', { locale: es })}`
+    : 'Cargando...'
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Account Statements</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Estados de Cuenta</h1>
         <p className="text-muted-foreground">
-          View and download your account statements
+          Ve y descarga tus estados de cuenta
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export default function StatementsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filters
+            Filtros
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -113,7 +113,7 @@ export default function StatementsPage() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select period" />
+                  <SelectValue placeholder="Seleccionar período" />
                 </SelectTrigger>
                 <SelectContent>
                   {months.map((month) => (
@@ -128,13 +128,13 @@ export default function StatementsPage() {
               <FileText className="h-4 w-4 text-muted-foreground" />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="All statuses" />
+                  <SelectValue placeholder="Todos los estados" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="partial">Partial</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="paid">Pagado</SelectItem>
+                  <SelectItem value="partial">Parcial</SelectItem>
+                  <SelectItem value="pending">Pendiente</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -145,21 +145,21 @@ export default function StatementsPage() {
       {/* Summary */}
       <Card>
         <CardHeader>
-          <CardTitle>Statement Summary</CardTitle>
+          <CardTitle>Resumen del Estado</CardTitle>
           <CardDescription>{periodLabel}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm text-muted-foreground">Total Purchases</p>
+              <p className="text-sm text-muted-foreground">Total Compras</p>
               <p className="text-2xl font-bold">{formatCurrency(totalPurchases)}</p>
             </div>
             <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm text-muted-foreground">Total Paid</p>
+              <p className="text-sm text-muted-foreground">Total Pagado</p>
               <p className="text-2xl font-bold text-status-paid">{formatCurrency(totalPaid)}</p>
             </div>
             <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm text-muted-foreground">Balance Due</p>
+              <p className="text-sm text-muted-foreground">Saldo Pendiente</p>
               <p className={`text-2xl font-bold ${totalDue > 0 ? 'text-status-pending' : 'text-status-paid'}`}>
                 {formatCurrency(totalDue)}
               </p>
@@ -172,28 +172,28 @@ export default function StatementsPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Transaction Details</CardTitle>
+            <CardTitle>Detalle de Transacciones</CardTitle>
             <CardDescription>
-              {filteredPurchases.length} {filteredPurchases.length === 1 ? 'transaction' : 'transactions'}
+              {filteredPurchases.length} {filteredPurchases.length === 1 ? 'transacción' : 'transacciones'}
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Loading...</p>
+              <p className="text-muted-foreground">Cargando...</p>
             </div>
           ) : filteredPurchases.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead className="text-center">Qty</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-right">Paid</TableHead>
-                  <TableHead className="text-right">Due</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead className="text-center">Cant.</TableHead>
+                  <TableHead className="text-right">Monto</TableHead>
+                  <TableHead className="text-right">Pagado</TableHead>
+                  <TableHead className="text-right">Pendiente</TableHead>
+                  <TableHead className="text-center">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -224,9 +224,9 @@ export default function StatementsPage() {
           ) : (
             <div className="text-center py-12">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No transactions found</p>
+              <p className="text-lg font-medium">Sin transacciones</p>
               <p className="text-muted-foreground">
-                No purchases found for the selected period and filters
+                No se encontraron compras para el período y filtros seleccionados
               </p>
             </div>
           )}

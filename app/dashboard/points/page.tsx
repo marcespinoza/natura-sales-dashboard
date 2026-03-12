@@ -35,9 +35,9 @@ export default async function PointsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Loyalty Points</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Puntos de Lealtad</h1>
         <p className="text-muted-foreground">
-          Track your points and rewards
+          Controla tus puntos y recompensas
         </p>
       </div>
 
@@ -45,7 +45,7 @@ export default async function PointsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="border-2 border-chart-3/30 bg-chart-3/5">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Points</CardTitle>
+            <CardTitle className="text-sm font-medium">Puntos Disponibles</CardTitle>
             <Award className="h-4 w-4 text-chart-3" />
           </CardHeader>
           <CardContent>
@@ -53,14 +53,14 @@ export default async function PointsPage() {
               {formatNumber(profile?.points_balance || 0)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Points ready to redeem
+              Puntos listos para canjear
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Ganado</CardTitle>
             <TrendingUp className="h-4 w-4 text-status-paid" />
           </CardHeader>
           <CardContent>
@@ -68,14 +68,14 @@ export default async function PointsPage() {
               +{formatNumber(totalEarned)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Lifetime points earned
+              Puntos ganados de por vida
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Redeemed</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Canjeado</CardTitle>
             <Gift className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
@@ -83,7 +83,7 @@ export default async function PointsPage() {
               {formatNumber(totalRedeemed)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Points used for rewards
+              Puntos usados en recompensas
             </p>
           </CardContent>
         </Card>
@@ -92,9 +92,9 @@ export default async function PointsPage() {
       {/* Points History */}
       <Card>
         <CardHeader>
-          <CardTitle>Points History</CardTitle>
+          <CardTitle>Historial de Puntos</CardTitle>
           <CardDescription>
-            All your points transactions
+            Todas tus transacciones de puntos
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -102,9 +102,9 @@ export default async function PointsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Points</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Descripción</TableHead>
+                  <TableHead className="text-right">Puntos</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -141,9 +141,9 @@ export default async function PointsPage() {
           ) : (
             <div className="text-center py-12">
               <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No points yet</p>
+              <p className="text-lg font-medium">Sin puntos aún</p>
               <p className="text-muted-foreground">
-                Start earning points with your purchases!
+                ¡Comienza a ganar puntos con tus compras!
               </p>
             </div>
           )}
@@ -155,23 +155,23 @@ export default async function PointsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Gift className="h-5 w-5" />
-            How Points Work
+            Cómo Funcionan los Puntos
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg bg-muted p-4">
-              <h4 className="font-medium mb-2">Earning Points</h4>
+              <h4 className="font-medium mb-2">Ganar Puntos</h4>
               <p className="text-sm text-muted-foreground">
-                Earn 1 point for every $1 spent on Natura products. 
-                Points are automatically added to your account after each purchase.
+                Gana 1 punto por cada $1 gastado en productos Natura. 
+                Los puntos se agregan automáticamente a tu cuenta después de cada compra.
               </p>
             </div>
             <div className="rounded-lg bg-muted p-4">
-              <h4 className="font-medium mb-2">Redeeming Points</h4>
+              <h4 className="font-medium mb-2">Canjear Puntos</h4>
               <p className="text-sm text-muted-foreground">
-                Contact your Natura consultant to redeem points for 
-                discounts on future purchases or exclusive rewards.
+                Contacta a tu consultora Natura para canjear puntos por 
+                descuentos en compras futuras o recompensas exclusivas.
               </p>
             </div>
           </div>

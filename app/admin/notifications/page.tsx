@@ -17,8 +17,8 @@ const typeIcons = {
 const typeLabels = {
   info: 'Info',
   promo: 'Promo',
-  payment: 'Payment',
-  points: 'Points',
+  payment: 'Pago',
+  points: 'Puntos',
 }
 
 export default async function NotificationsPage() {
@@ -42,15 +42,15 @@ export default async function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Notifications</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Notificaciones</h1>
           <p className="text-muted-foreground">
-            Send and manage client notifications
+            Envía y administra notificaciones a clientes
           </p>
         </div>
         <Button asChild>
           <Link href="/admin/notifications/new">
             <Plus className="mr-2 h-4 w-4" />
-            New Notification
+            Nueva Notificación
           </Link>
         </Button>
       </div>
@@ -59,7 +59,7 @@ export default async function NotificationsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Sent</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Enviadas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{allNotifications.length}</div>
@@ -67,7 +67,7 @@ export default async function NotificationsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Global Announcements</CardTitle>
+            <CardTitle className="text-sm font-medium">Anuncios Globales</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{globalNotifications.length}</div>
@@ -75,7 +75,7 @@ export default async function NotificationsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Individual Messages</CardTitle>
+            <CardTitle className="text-sm font-medium">Mensajes Individuales</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{userNotifications.length}</div>
@@ -86,9 +86,9 @@ export default async function NotificationsPage() {
       {/* Notifications Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Notification History</CardTitle>
+          <CardTitle>Historial de Notificaciones</CardTitle>
           <CardDescription>
-            Recent notifications sent to clients
+            Notificaciones recientes enviadas a clientes
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -96,11 +96,11 @@ export default async function NotificationsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Recipient</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Message</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Destinatario</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Mensaje</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -114,11 +114,11 @@ export default async function NotificationsPage() {
                       </TableCell>
                       <TableCell>
                         {notification.user_id ? (
-                          notification.user?.full_name || 'Unknown'
+                          notification.user?.full_name || 'Desconocido'
                         ) : (
                           <Badge variant="outline" className="gap-1">
                             <Globe className="h-3 w-3" />
-                            All Clients
+                            Todos los Clientes
                           </Badge>
                         )}
                       </TableCell>
@@ -142,14 +142,14 @@ export default async function NotificationsPage() {
           ) : (
             <div className="text-center py-12">
               <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No notifications yet</p>
+              <p className="text-lg font-medium">Sin notificaciones aún</p>
               <p className="text-muted-foreground mb-4">
-                Send your first notification to clients
+                Envía tu primera notificación a los clientes
               </p>
               <Button asChild>
                 <Link href="/admin/notifications/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  New Notification
+                  Nueva Notificación
                 </Link>
               </Button>
             </div>

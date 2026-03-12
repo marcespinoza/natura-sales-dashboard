@@ -9,7 +9,7 @@ export default async function AuthErrorPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const params = await searchParams
-  const errorMessage = params.error || 'An unexpected error occurred during authentication'
+  const errorMessage = params.error || 'Ocurrió un error inesperado durante la autenticación'
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30 p-4">
@@ -18,9 +18,9 @@ export default async function AuthErrorPage({
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
             <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
-          <CardTitle className="text-2xl font-bold text-balance">Authentication Error</CardTitle>
+          <CardTitle className="text-2xl font-bold text-balance">Error de Autenticación</CardTitle>
           <CardDescription className="text-pretty">
-            Something went wrong during the sign-in process
+            Algo salió mal durante el proceso de inicio de sesión
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -32,13 +32,13 @@ export default async function AuthErrorPage({
           <Button asChild className="w-full">
             <Link href="/auth/login">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Sign In
+              Volver a Iniciar Sesión
             </Link>
           </Button>
           <p className="text-sm text-muted-foreground">
-            Need help?{' '}
-            <a href="mailto:support@natura.com" className="text-primary hover:underline">
-              Contact support
+            ¿Necesitas ayuda?{' '}
+            <a href="mailto:soporte@natura.com" className="text-primary hover:underline">
+              Contacta soporte
             </a>
           </p>
         </CardFooter>

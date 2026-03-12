@@ -8,9 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Spinner } from '@/components/ui/spinner'
-import { User, Mail, Phone, MapPin, CheckCircle, AlertCircle } from 'lucide-react'
+import { User, Mail, Phone, MapPin, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Profile } from '@/lib/types'
 
@@ -76,9 +75,9 @@ export default function ProfilePage() {
     setIsSaving(false)
 
     if (error) {
-      toast.error('Failed to update profile')
+      toast.error('Error al actualizar perfil')
     } else {
-      toast.success('Profile updated successfully')
+      toast.success('Perfil actualizado correctamente')
       router.refresh()
     }
   }
@@ -94,9 +93,9 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Perfil</h1>
         <p className="text-muted-foreground">
-          Manage your account information
+          Administra la información de tu cuenta
         </p>
       </div>
 
@@ -106,26 +105,26 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Personal Information
+              Información Personal
             </CardTitle>
             <CardDescription>
-              Update your profile details
+              Actualiza los detalles de tu perfil
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">Nombre Completo</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="John Doe"
+                  placeholder="María García"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Correo Electrónico</Label>
                 <Input
                   id="email"
                   type="email"
@@ -134,35 +133,35 @@ export default function ProfilePage() {
                   className="bg-muted"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Email cannot be changed
+                  El correo no se puede cambiar
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Número de Teléfono</Label>
                 <Input
                   id="phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+52 (55) 1234-5678"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">Dirección</Label>
                 <Textarea
                   id="address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="123 Main St, City, State 12345"
+                  placeholder="Calle Principal 123, Col. Centro, Ciudad, CP 12345"
                   rows={3}
                 />
               </div>
 
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? <Spinner className="mr-2" /> : null}
-                Save Changes
+                Guardar Cambios
               </Button>
             </form>
           </CardContent>
@@ -172,7 +171,7 @@ export default function ProfilePage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Account Status</CardTitle>
+              <CardTitle>Estado de la Cuenta</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
@@ -180,9 +179,9 @@ export default function ProfilePage() {
                   <CheckCircle className="h-5 w-5 text-status-paid" />
                 </div>
                 <div>
-                  <p className="font-medium">Account Active</p>
+                  <p className="font-medium">Cuenta Activa</p>
                   <p className="text-sm text-muted-foreground">
-                    Your account is in good standing
+                    Tu cuenta está en buen estado
                   </p>
                 </div>
               </div>
@@ -192,7 +191,7 @@ export default function ProfilePage() {
                   <Mail className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium">Email Verified</p>
+                  <p className="font-medium">Correo Verificado</p>
                   <p className="text-sm text-muted-foreground">{email}</p>
                 </div>
               </div>
@@ -201,7 +200,7 @@ export default function ProfilePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
+              <CardTitle>Información de Contacto</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {phone ? (
@@ -210,7 +209,7 @@ export default function ProfilePage() {
                   <span>{phone}</span>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No phone number added</p>
+                <p className="text-sm text-muted-foreground">Sin número de teléfono agregado</p>
               )}
               
               {address ? (
@@ -219,7 +218,7 @@ export default function ProfilePage() {
                   <span className="text-sm">{address}</span>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No address added</p>
+                <p className="text-sm text-muted-foreground">Sin dirección agregada</p>
               )}
             </CardContent>
           </Card>

@@ -7,32 +7,32 @@ import { LayoutDashboard, ShoppingBag, CreditCard, Award, FileText, User } from 
 
 const navItems = [
   {
-    title: 'Overview',
+    title: 'Resumen',
     href: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: 'Purchases',
+    title: 'Compras',
     href: '/dashboard/purchases',
     icon: ShoppingBag,
   },
   {
-    title: 'Payments',
+    title: 'Pagos',
     href: '/dashboard/payments',
     icon: CreditCard,
   },
   {
-    title: 'Points',
+    title: 'Puntos',
     href: '/dashboard/points',
     icon: Award,
   },
   {
-    title: 'Statements',
+    title: 'Estados de Cuenta',
     href: '/dashboard/statements',
     icon: FileText,
   },
   {
-    title: 'Profile',
+    title: 'Perfil',
     href: '/dashboard/profile',
     icon: User,
   },

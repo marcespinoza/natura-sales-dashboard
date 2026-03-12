@@ -1,29 +1,30 @@
 import { format, formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 export function formatCurrency(amount: number | string): string {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('es-MX', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'MXN',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(num)
 }
 
 export function formatDate(date: string | Date): string {
-  return format(new Date(date), 'MMM d, yyyy')
+  return format(new Date(date), 'd MMM yyyy', { locale: es })
 }
 
 export function formatDateTime(date: string | Date): string {
-  return format(new Date(date), 'MMM d, yyyy h:mm a')
+  return format(new Date(date), 'd MMM yyyy h:mm a', { locale: es })
 }
 
 export function formatRelativeTime(date: string | Date): string {
-  return formatDistanceToNow(new Date(date), { addSuffix: true })
+  return formatDistanceToNow(new Date(date), { addSuffix: true, locale: es })
 }
 
 export function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num)
+  return new Intl.NumberFormat('es-MX').format(num)
 }
 
 export function formatPhoneNumber(phone: string): string {

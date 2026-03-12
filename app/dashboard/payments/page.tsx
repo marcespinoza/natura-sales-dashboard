@@ -14,10 +14,10 @@ const paymentMethodIcons = {
 }
 
 const paymentMethodLabels = {
-  cash: 'Cash',
-  transfer: 'Transfer',
-  card: 'Card',
-  other: 'Other',
+  cash: 'Efectivo',
+  transfer: 'Transferencia',
+  card: 'Tarjeta',
+  other: 'Otro',
 }
 
 export default async function PaymentsPage() {
@@ -47,9 +47,9 @@ export default async function PaymentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Payment History</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Historial de Pagos</h1>
         <p className="text-muted-foreground">
-          Track all your payments and transactions
+          Controla todos tus pagos y transacciones
         </p>
       </div>
 
@@ -58,19 +58,19 @@ export default async function PaymentsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
-            Payment Summary
+            Resumen de Pagos
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm text-muted-foreground">Total Paid</p>
+              <p className="text-sm text-muted-foreground">Total Pagado</p>
               <p className="text-2xl font-bold text-status-paid">
                 {formatCurrency(totalPaid)}
               </p>
             </div>
             <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm text-muted-foreground">Total Transactions</p>
+              <p className="text-sm text-muted-foreground">Total de Transacciones</p>
               <p className="text-2xl font-bold">{allPayments.length}</p>
             </div>
           </div>
@@ -80,9 +80,9 @@ export default async function PaymentsPage() {
       {/* Payments Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Payments</CardTitle>
+          <CardTitle>Todos los Pagos</CardTitle>
           <CardDescription>
-            Your complete payment history
+            Tu historial completo de pagos
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -90,11 +90,11 @@ export default async function PaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>Notes</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead>Método</TableHead>
+                  <TableHead className="text-right">Monto</TableHead>
+                  <TableHead>Notas</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -107,7 +107,7 @@ export default async function PaymentsPage() {
                         {formatDate(payment.created_at)}
                       </TableCell>
                       <TableCell>
-                        {payment.purchase?.product?.name || 'Unknown Product'}
+                        {payment.purchase?.product?.name || 'Producto Desconocido'}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="gap-1">
@@ -129,9 +129,9 @@ export default async function PaymentsPage() {
           ) : (
             <div className="text-center py-12">
               <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No payments yet</p>
+              <p className="text-lg font-medium">Sin pagos aún</p>
               <p className="text-muted-foreground">
-                Your payment history will appear here
+                Tu historial de pagos aparecerá aquí
               </p>
             </div>
           )}

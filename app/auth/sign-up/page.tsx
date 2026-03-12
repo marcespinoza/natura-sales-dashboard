@@ -29,12 +29,12 @@ export default function SignUpPage() {
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError('Las contraseñas no coinciden')
       return
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError('La contraseña debe tener al menos 6 caracteres')
       return
     }
 
@@ -105,9 +105,9 @@ export default function SignUpPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
             <Leaf className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold text-balance">Create your account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-balance">Crea tu cuenta</CardTitle>
           <CardDescription className="text-pretty">
-            Join Natura and start managing your purchases
+            Únete a Natura y comienza a administrar tus compras
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -120,11 +120,11 @@ export default function SignUpPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName">Nombre completo</Label>
               <Input
                 id="fullName"
                 type="text"
-                placeholder="John Doe"
+                placeholder="María García"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
@@ -132,11 +132,11 @@ export default function SignUpPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Correo electrónico</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="tu@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -144,22 +144,22 @@ export default function SignUpPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone (optional)</Label>
+              <Label htmlFor="phone">Teléfono (opcional)</Label>
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+1 (555) 000-0000"
+                placeholder="+52 (55) 1234-5678"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Contraseña</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Create a password"
+                placeholder="Crea una contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -167,11 +167,11 @@ export default function SignUpPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm your password"
+                placeholder="Confirma tu contraseña"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -180,7 +180,7 @@ export default function SignUpPage() {
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? <Spinner className="mr-2" /> : null}
-              Create Account
+              Crear Cuenta
             </Button>
           </form>
 
@@ -189,7 +189,7 @@ export default function SignUpPage() {
               <Separator className="w-full" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-card px-2 text-muted-foreground">O continúa con</span>
             </div>
           </div>
 
@@ -241,9 +241,9 @@ export default function SignUpPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-muted-foreground text-center">
-            Already have an account?{' '}
+            ¿Ya tienes cuenta?{' '}
             <Link href="/auth/login" className="text-primary hover:underline font-medium">
-              Sign in
+              Inicia sesión
             </Link>
           </div>
         </CardFooter>

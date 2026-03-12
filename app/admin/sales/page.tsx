@@ -35,15 +35,15 @@ export default async function SalesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Sales</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Ventas</h1>
           <p className="text-muted-foreground">
-            View and manage all sales transactions
+            Ve y administra todas las transacciones de ventas
           </p>
         </div>
         <Button asChild>
           <Link href="/admin/sales/new">
             <Plus className="mr-2 h-4 w-4" />
-            New Sale
+            Nueva Venta
           </Link>
         </Button>
       </div>
@@ -52,7 +52,7 @@ export default async function SalesPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Ventas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{allPurchases.length}</div>
@@ -60,7 +60,7 @@ export default async function SalesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalSales)}</div>
@@ -68,7 +68,7 @@ export default async function SalesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Collected</CardTitle>
+            <CardTitle className="text-sm font-medium">Cobrado</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-status-paid">{formatCurrency(totalPaid)}</div>
@@ -79,9 +79,9 @@ export default async function SalesPage() {
       {/* Sales Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Sales</CardTitle>
+          <CardTitle>Todas las Ventas</CardTitle>
           <CardDescription>
-            {allPurchases.length} {allPurchases.length === 1 ? 'sale' : 'sales'}
+            {allPurchases.length} {allPurchases.length === 1 ? 'venta' : 'ventas'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -89,13 +89,13 @@ export default async function SalesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead className="text-center">Qty</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Producto</TableHead>
+                  <TableHead className="text-center">Cant.</TableHead>
                   <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right">Paid</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-right">Pagado</TableHead>
+                  <TableHead className="text-center">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -109,7 +109,7 @@ export default async function SalesPage() {
                       <TableCell className="font-medium">
                         {formatDate(purchase.created_at)}
                       </TableCell>
-                      <TableCell>{purchase.client?.full_name || 'Unknown'}</TableCell>
+                      <TableCell>{purchase.client?.full_name || 'Desconocido'}</TableCell>
                       <TableCell>
                         <div>
                           <p>{purchase.product?.name}</p>
@@ -138,14 +138,14 @@ export default async function SalesPage() {
           ) : (
             <div className="text-center py-12">
               <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium">No sales yet</p>
+              <p className="text-lg font-medium">Sin ventas aún</p>
               <p className="text-muted-foreground mb-4">
-                Record your first sale to get started
+                Registra tu primera venta para comenzar
               </p>
               <Button asChild>
                 <Link href="/admin/sales/new">
                   <Plus className="mr-2 h-4 w-4" />
-                  New Sale
+                  Nueva Venta
                 </Link>
               </Button>
             </div>

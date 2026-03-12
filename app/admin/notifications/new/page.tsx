@@ -48,12 +48,12 @@ export default function NewNotificationPage() {
     e.preventDefault()
 
     if (!title || !message) {
-      toast.error('Please fill in title and message')
+      toast.error('Por favor completa el título y mensaje')
       return
     }
 
     if (recipientType === 'individual' && !userId) {
-      toast.error('Please select a recipient')
+      toast.error('Por favor selecciona un destinatario')
       return
     }
 
@@ -72,15 +72,15 @@ export default function NewNotificationPage() {
       .insert(notificationData)
 
     if (error) {
-      toast.error('Failed to send notification')
+      toast.error('Error al enviar notificación')
       setIsSending(false)
       return
     }
 
     toast.success(
       recipientType === 'all'
-        ? 'Notification sent to all clients'
-        : 'Notification sent successfully'
+        ? 'Notificación enviada a todos los clientes'
+        : 'Notificación enviada correctamente'
     )
     router.push('/admin/notifications')
   }
@@ -94,9 +94,9 @@ export default function NewNotificationPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">New Notification</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Nueva Notificación</h1>
           <p className="text-muted-foreground">
-            Send a notification to your clients
+            Envía una notificación a tus clientes
           </p>
         </div>
       </div>
@@ -108,16 +108,16 @@ export default function NewNotificationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="h-5 w-5" />
-                Notification Details
+                Detalles de Notificación
               </CardTitle>
               <CardDescription>
-                Compose your notification message
+                Compón tu mensaje de notificación
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Recipient Type */}
               <div className="space-y-3">
-                <Label>Send To</Label>
+                <Label>Enviar A</Label>
                 <RadioGroup
                   value={recipientType}
                   onValueChange={(value) => setRecipientType(value as 'all' | 'individual')}
@@ -127,14 +127,14 @@ export default function NewNotificationPage() {
                     <RadioGroupItem value="all" id="all" />
                     <Label htmlFor="all" className="flex items-center gap-2 cursor-pointer">
                       <Globe className="h-4 w-4" />
-                      All Clients
+                      Todos los Clientes
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="individual" id="individual" />
                     <Label htmlFor="individual" className="flex items-center gap-2 cursor-pointer">
                       <User className="h-4 w-4" />
-                      Specific Client
+                      Cliente Específico
                     </Label>
                   </div>
                 </RadioGroup>
@@ -143,15 +143,15 @@ export default function NewNotificationPage() {
               {/* Client Selection (if individual) */}
               {recipientType === 'individual' && (
                 <div className="space-y-2">
-                  <Label>Select Client *</Label>
+                  <Label>Seleccionar Cliente *</Label>
                   <Select value={userId} onValueChange={setUserId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a client..." />
+                      <SelectValue placeholder="Elige un cliente..." />
                     </SelectTrigger>
                     <SelectContent>
                       {clients?.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
-                          {client.full_name || 'No name'}
+                          {client.full_name || 'Sin nombre'}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -161,7 +161,7 @@ export default function NewNotificationPage() {
 
               {/* Notification Type */}
               <div className="space-y-2">
-                <Label>Notification Type</Label>
+                <Label>Tipo de Notificación</Label>
                 <Select
                   value={notificationType}
                   onValueChange={(value) => setNotificationType(value as typeof notificationType)}
@@ -173,25 +173,25 @@ export default function NewNotificationPage() {
                     <SelectItem value="info">
                       <div className="flex items-center gap-2">
                         <Info className="h-4 w-4" />
-                        General Info
+                        Información General
                       </div>
                     </SelectItem>
                     <SelectItem value="promo">
                       <div className="flex items-center gap-2">
                         <Tag className="h-4 w-4" />
-                        Promotion
+                        Promoción
                       </div>
                     </SelectItem>
                     <SelectItem value="payment">
                       <div className="flex items-center gap-2">
                         <CreditCard className="h-4 w-4" />
-                        Payment
+                        Pago
                       </div>
                     </SelectItem>
                     <SelectItem value="points">
                       <div className="flex items-center gap-2">
                         <Award className="h-4 w-4" />
-                        Points
+                        Puntos
                       </div>
                     </SelectItem>
                   </SelectContent>
@@ -200,23 +200,23 @@ export default function NewNotificationPage() {
 
               {/* Title */}
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor="title">Título *</Label>
                 <Input
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g., New Products Available!"
+                  placeholder="ej., ¡Nuevos Productos Disponibles!"
                 />
               </div>
 
               {/* Message */}
               <div className="space-y-2">
-                <Label htmlFor="message">Message *</Label>
+                <Label htmlFor="message">Mensaje *</Label>
                 <Textarea
                   id="message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Write your notification message..."
+                  placeholder="Escribe tu mensaje de notificación..."
                   rows={5}
                 />
               </div>
@@ -226,9 +226,9 @@ export default function NewNotificationPage() {
           {/* Preview */}
           <Card>
             <CardHeader>
-              <CardTitle>Preview</CardTitle>
+              <CardTitle>Vista Previa</CardTitle>
               <CardDescription>
-                {"How clients will see your notification"}
+                Cómo verán los clientes tu notificación
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -247,33 +247,33 @@ export default function NewNotificationPage() {
                   </div>
                   <div className="flex-1 space-y-1">
                     <p className="font-medium">
-                      {title || 'Notification Title'}
+                      {title || 'Título de Notificación'}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {message || 'Your notification message will appear here...'}
+                      {message || 'Tu mensaje de notificación aparecerá aquí...'}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Just now
+                      Ahora mismo
                     </p>
                   </div>
                 </div>
               </div>
 
               <div className="mt-6 rounded-lg bg-muted p-4">
-                <h4 className="font-medium mb-2">Recipients</h4>
+                <h4 className="font-medium mb-2">Destinatarios</h4>
                 <p className="text-sm text-muted-foreground">
                   {recipientType === 'all' ? (
                     <>
                       <Globe className="inline h-4 w-4 mr-1" />
-                      All {clients?.length || 0} clients will receive this notification
+                      Los {clients?.length || 0} clientes recibirán esta notificación
                     </>
                   ) : userId ? (
                     <>
                       <User className="inline h-4 w-4 mr-1" />
-                      {clients?.find((c) => c.id === userId)?.full_name || 'Selected client'}
+                      {clients?.find((c) => c.id === userId)?.full_name || 'Cliente seleccionado'}
                     </>
                   ) : (
-                    'Select a client to preview'
+                    'Selecciona un cliente para ver vista previa'
                   )}
                 </p>
               </div>
@@ -284,7 +284,7 @@ export default function NewNotificationPage() {
                 disabled={isSending || !title || !message || (recipientType === 'individual' && !userId)}
               >
                 {isSending ? <Spinner className="mr-2" /> : <Bell className="mr-2 h-4 w-4" />}
-                Send Notification
+                Enviar Notificación
               </Button>
             </CardContent>
           </Card>

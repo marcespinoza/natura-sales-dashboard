@@ -63,9 +63,9 @@ export default async function AdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Panel de Administración</h1>
         <p className="text-muted-foreground">
-          Overview of your Natura business
+          Resumen de tu negocio Natura
         </p>
       </div>
 
@@ -73,52 +73,52 @@ export default async function AdminPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Clientes</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{clientsCount || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Registered clients
+              Clientes registrados
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Products</CardTitle>
+            <CardTitle className="text-sm font-medium">Productos Activos</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{productsCount || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Products in catalog
+              Productos en catálogo
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-status-paid">{formatCurrency(monthlyRevenue)}</span> this month
+              <span className="text-status-paid">{formatCurrency(monthlyRevenue)}</span> este mes
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Collected</CardTitle>
+            <CardTitle className="text-sm font-medium">Cobrado</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-status-paid">{formatCurrency(totalCollected)}</div>
             <p className="text-xs text-muted-foreground">
-              {totalRevenue > 0 ? Math.round((totalCollected / totalRevenue) * 100) : 0}% of total
+              {totalRevenue > 0 ? Math.round((totalCollected / totalRevenue) * 100) : 0}% del total
             </p>
           </CardContent>
         </Card>
@@ -132,13 +132,13 @@ export default async function AdminPage() {
               <AlertCircle className="h-5 w-5 text-status-pending" />
             </div>
             <div className="flex-1">
-              <p className="font-medium">Outstanding Balance</p>
+              <p className="font-medium">Saldo Pendiente</p>
               <p className="text-sm text-muted-foreground">
-                {formatCurrency(totalOutstanding)} pending across all clients
+                {formatCurrency(totalOutstanding)} pendiente de todos los clientes
               </p>
             </div>
             <Button asChild variant="outline">
-              <Link href="/admin/payments">Manage Payments</Link>
+              <Link href="/admin/payments">Gestionar Pagos</Link>
             </Button>
           </CardContent>
         </Card>
@@ -151,10 +151,10 @@ export default async function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5 text-primary" />
-                New Sale
+                Nueva Venta
               </CardTitle>
               <CardDescription>
-                Record a new product sale
+                Registrar una nueva venta de producto
               </CardDescription>
             </CardHeader>
           </Link>
@@ -165,10 +165,10 @@ export default async function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-status-paid" />
-                Record Payment
+                Registrar Pago
               </CardTitle>
               <CardDescription>
-                Log a client payment
+                Registrar un pago de cliente
               </CardDescription>
             </CardHeader>
           </Link>
@@ -179,10 +179,10 @@ export default async function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="h-5 w-5 text-chart-3" />
-                Send Notification
+                Enviar Notificación
               </CardTitle>
               <CardDescription>
-                Notify clients about updates
+                Notificar a clientes sobre novedades
               </CardDescription>
             </CardHeader>
           </Link>
@@ -193,11 +193,11 @@ export default async function AdminPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Recent Sales</CardTitle>
-            <CardDescription>Latest transactions</CardDescription>
+            <CardTitle>Ventas Recientes</CardTitle>
+            <CardDescription>Últimas transacciones</CardDescription>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/admin/sales">View All</Link>
+            <Link href="/admin/sales">Ver Todas</Link>
           </Button>
         </CardHeader>
         <CardContent>
@@ -219,7 +219,7 @@ export default async function AdminPage() {
                       <div>
                         <p className="font-medium">{purchase.product?.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {purchase.client?.full_name || 'Unknown'} · {formatDate(purchase.created_at)}
+                          {purchase.client?.full_name || 'Desconocido'} · {formatDate(purchase.created_at)}
                         </p>
                       </div>
                     </div>
@@ -234,7 +234,7 @@ export default async function AdminPage() {
           ) : (
             <div className="text-center py-8">
               <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No sales yet</p>
+              <p className="text-muted-foreground">Sin ventas aún</p>
             </div>
           )}
         </CardContent>

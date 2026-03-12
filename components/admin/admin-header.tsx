@@ -88,7 +88,7 @@ export function AdminHeader({ user, profile }: AdminHeaderProps) {
               <DropdownMenuItem asChild>
                 <Link href="/admin/settings" className="cursor-pointer">
                   <UserIcon className="mr-2 h-4 w-4" />
-                  Settings
+                  Configuración
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -98,7 +98,7 @@ export function AdminHeader({ user, profile }: AdminHeaderProps) {
                 className="cursor-pointer text-destructive focus:text-destructive"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {isLoggingOut ? 'Signing out...' : 'Sign out'}
+                {isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
