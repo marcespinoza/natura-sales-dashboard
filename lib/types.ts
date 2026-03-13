@@ -2,6 +2,7 @@ export type UserRole = 'client' | 'admin'
 
 export interface Profile {
   id: string
+  email: string | null
   full_name: string | null
   phone: string | null
   address: string | null

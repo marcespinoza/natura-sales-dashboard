@@ -24,12 +24,12 @@ const typeLabels = {
 export default async function NotificationsPage() {
   const supabase = await createClient()
 
-  // Get all notifications sent by admin (not user-specific or global)
+  // Get all notifications
   const { data: notifications } = await supabase
     .from('notifications')
     .select(`
       *,
-      user:profiles(full_name)
+      user:profiles(full_name, email)
     `)
     .order('created_at', { ascending: false })
     .limit(50)

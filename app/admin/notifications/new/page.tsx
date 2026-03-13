@@ -34,14 +34,22 @@ export default function NewNotificationPage() {
   const [notificationType, setNotificationType] = useState<'info' | 'promo' | 'payment' | 'points'>('info')
   const [isSending, setIsSending] = useState(false)
 
-  // Fetch clients
+  // Fetch clients (non-admins)
   const { data: clients } = useSWR<Profile[]>('notification-clients', async () => {
-    const { data } = await supabase
+    // Get all admins to exclude them
+    const { data: admins } = await supabase
+      .from('admins')
+      .select('email')
+    
+    const adminEmails = new Set(admins?.map(a => a.email) || [])
+    
+    const { data: profiles } = await supabase
       .from('profiles')
       .select('*')
-      .eq('role', 'client')
       .order('full_name')
-    return data || []
+    
+    // Filter out admins
+    return (profiles || []).filter(p => !adminEmails.has(p.email || ''))
   })
 
   async function handleSubmit(e: React.FormEvent) {

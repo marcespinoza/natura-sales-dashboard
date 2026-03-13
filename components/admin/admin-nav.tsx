@@ -4,24 +4,16 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { 
-  LayoutDashboard, 
   Users, 
   Package, 
-  ShoppingCart, 
-  CreditCard, 
   Bell,
   Settings 
 } from 'lucide-react'
 
 const navItems = [
   {
-    title: 'Resumen',
-    href: '/admin',
-    icon: LayoutDashboard,
-  },
-  {
     title: 'Clientes',
-    href: '/admin/clients',
+    href: '/admin',
     icon: Users,
   },
   {
@@ -30,22 +22,12 @@ const navItems = [
     icon: Package,
   },
   {
-    title: 'Ventas',
-    href: '/admin/sales',
-    icon: ShoppingCart,
-  },
-  {
-    title: 'Pagos',
-    href: '/admin/payments',
-    icon: CreditCard,
-  },
-  {
     title: 'Notificaciones',
     href: '/admin/notifications',
     icon: Bell,
   },
   {
-    title: 'Configuración',
+    title: 'Configuracion',
     href: '/admin/settings',
     icon: Settings,
   },
@@ -59,6 +41,7 @@ export function AdminNav() {
       <nav className="flex flex-col gap-1 p-4">
         {navItems.map((item) => {
           const isActive = pathname === item.href || 
+            (item.href === '/admin' && pathname.startsWith('/admin/clients')) ||
             (item.href !== '/admin' && pathname.startsWith(item.href))
           
           return (
