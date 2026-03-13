@@ -49,19 +49,20 @@ export async function signIn(formData: FormData) {
     return { error: error.message }
   }
 
-  // Get user profile to determine redirect
+  // Get user to determine redirect based on admin status
   const { data: { user } } = await supabase.auth.getUser()
   
   if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
+    // Check if user is an admin by email in admins table
+    const { data: adminRecord } = await supabase
+      .from('admins')
+      .select('id')
+      .eq('email', user.email)
       .single()
 
     revalidatePath('/', 'layout')
     
-    if (profile?.role === 'admin') {
+    if (adminRecord) {
       redirect('/admin')
     } else {
       redirect('/dashboard')
@@ -145,4 +146,98 @@ export async function getUserProfile() {
     .single()
 
   return profile
+}
+
+export async function isUserAdmin(email?: string | null) {
+  if (!email) return false
+  
+  const supabase = await createClient()
+  const { data: adminRecord } = await supabase
+    .from('admins')
+    .select('id')
+    .eq('email', email)
+    .single()
+
+  return !!adminRecord
+}
+
+export async function getAdmins() {
+  const supabase = await createClient()
+  const { data: admins, error } = await supabase
+    .from('admins')
+    .select('*')
+    .order('created_at', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching admins:', error)
+    return []
+  }
+
+  return admins || []
+}
+
+export async function addAdmin(email: string, addedBy: string) {
+  const supabase = await createClient()
+  
+  // Check if already admin
+  const { data: existing } = await supabase
+    .from('admins')
+    .select('id')
+    .eq('email', email)
+    .single()
+
+  if (existing) {
+    return { error: 'Este correo ya es administrador' }
+  }
+
+  const { error } = await supabase
+    .from('admins')
+    .insert({
+      email: email.toLowerCase().trim(),
+      added_by: addedBy,
+    })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/admin/settings')
+  return { success: true }
+}
+
+export async function removeAdmin(adminId: string, currentUserEmail: string) {
+  const supabase = await createClient()
+  
+  // Get the admin to be removed
+  const { data: adminToRemove } = await supabase
+    .from('admins')
+    .select('email')
+    .eq('id', adminId)
+    .single()
+
+  // Prevent removing yourself
+  if (adminToRemove?.email === currentUserEmail) {
+    return { error: 'No puedes eliminarte a ti mismo como administrador' }
+  }
+
+  // Count remaining admins
+  const { count } = await supabase
+    .from('admins')
+    .select('*', { count: 'exact', head: true })
+
+  if (count && count <= 1) {
+    return { error: 'Debe haber al menos un administrador' }
+  }
+
+  const { error } = await supabase
+    .from('admins')
+    .delete()
+    .eq('id', adminId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/admin/settings')
+  return { success: true }
 }

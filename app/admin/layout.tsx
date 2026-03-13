@@ -15,17 +15,24 @@ export default async function AdminLayout({
     redirect('/auth/login')
   }
 
-  // Get user profile and verify admin role
+  // Check if user is admin by email in admins table
+  const { data: adminRecord } = await supabase
+    .from('admins')
+    .select('id')
+    .eq('email', user.email)
+    .single()
+
+  // Redirect non-admins to client dashboard
+  if (!adminRecord) {
+    redirect('/dashboard')
+  }
+
+  // Get user profile for display
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
-
-  // Redirect non-admins to client dashboard
-  if (profile?.role !== 'admin') {
-    redirect('/dashboard')
-  }
 
   return (
     <div className="min-h-screen bg-background">
