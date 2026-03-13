@@ -53,11 +53,11 @@ export async function signIn(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (user) {
-    // Check if user is an admin by email in admins table
+    // Check if user is an admin by email in admins table (case-insensitive)
     const { data: adminRecord } = await supabase
       .from('admins')
       .select('id')
-      .eq('email', user.email)
+      .ilike('email', user.email?.toLowerCase() || '')
       .single()
 
     revalidatePath('/', 'layout')
@@ -155,7 +155,7 @@ export async function isUserAdmin(email?: string | null) {
   const { data: adminRecord } = await supabase
     .from('admins')
     .select('id')
-    .eq('email', email)
+    .ilike('email', email.toLowerCase())
     .single()
 
   return !!adminRecord
@@ -179,11 +179,11 @@ export async function getAdmins() {
 export async function addAdmin(email: string, addedBy: string) {
   const supabase = await createClient()
   
-  // Check if already admin
+  // Check if already admin (case-insensitive)
   const { data: existing } = await supabase
     .from('admins')
     .select('id')
-    .eq('email', email)
+    .ilike('email', email.toLowerCase().trim())
     .single()
 
   if (existing) {
@@ -215,8 +215,8 @@ export async function removeAdmin(adminId: string, currentUserEmail: string) {
     .eq('id', adminId)
     .single()
 
-  // Prevent removing yourself
-  if (adminToRemove?.email === currentUserEmail) {
+  // Prevent removing yourself (case-insensitive comparison)
+  if (adminToRemove?.email?.toLowerCase() === currentUserEmail?.toLowerCase()) {
     return { error: 'No puedes eliminarte a ti mismo como administrador' }
   }
 

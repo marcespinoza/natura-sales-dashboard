@@ -15,11 +15,11 @@ export default async function AdminLayout({
     redirect('/auth/login')
   }
 
-  // Check if user is admin by email in admins table
+  // Check if user is admin by email in admins table (case-insensitive)
   const { data: adminRecord } = await supabase
     .from('admins')
     .select('id')
-    .eq('email', user.email)
+    .ilike('email', user.email?.toLowerCase() || '')
     .single()
 
   // Redirect non-admins to client dashboard
