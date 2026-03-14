@@ -39,17 +39,20 @@ export default function LoginPage() {
       return
     }
 
-    // Get user profile to determine redirect
+    // Get user to determine redirect based on admin status
     const { data: { user } } = await supabase.auth.getUser()
     
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
+    if (user && user.email) {
+      // Check if user is admin by email in admins table
+      const { data: adminRecord } = await supabase
+        .from('admins')
+        .select('id')
+        .eq('email', user.email.toLowerCase())
         .single()
 
-      if (profile?.role === 'admin') {
+      console.log('[v0] Login - user email:', user.email, 'adminRecord:', adminRecord)
+
+      if (adminRecord) {
         router.push('/admin')
       } else {
         router.push('/dashboard')
