@@ -227,6 +227,8 @@ export default function ProductsPage() {
           />
         </div>
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="description">Descripción</Label>
         <Textarea
           id="description"
           value={description}
