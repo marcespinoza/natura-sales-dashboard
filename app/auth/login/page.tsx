@@ -18,8 +18,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [socialLoading, setSocialLoading] = useState<'google' | null>(null)
+  const [showResetPassword, setShowResetPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetMessage, setResetMessage] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -77,6 +78,29 @@ export default function LoginPage() {
     }
   }
 
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault()
+    setResetMessage(null)
+    
+    if (!resetEmail) {
+      setError('Por favor ingresa tu correo electrónico')
+      return
+    }
+
+    const supabase = createClient()
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+
+    if (error) {
+      setError(error.message)
+    } else {
+      setResetMessage('Se ha enviado un enlace para recuperar tu contraseña. Revisa tu correo.')
+      setResetEmail('')
+      setTimeout(() => setShowResetPassword(false), 3000)
+    }
+  }
+
   async function handleFacebookSignIn() {
     setSocialLoading('facebook')
     setError(null)
@@ -115,7 +139,16 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {resetMessage && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="text-green-700">{resetMessage}</AlertDescription>
+            </Alert>
+          )}
+
+          {!showResetPassword ? (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
               <Input
@@ -144,7 +177,41 @@ export default function LoginPage() {
               {isLoading ? <Spinner className="mr-2" /> : null}
               Iniciar Sesión
             </Button>
-          </form>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-sm"
+              onClick={() => setShowResetPassword(true)}
+            >
+              ¿Olvidaste tu contraseña?
+            </Button>
+            </>
+          ) : (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="resetEmail">Correo electrónico</Label>
+                <Input
+                  id="resetEmail"
+                  type="email"
+                  placeholder="tu@ejemplo.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Enviar enlace de recuperación
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setShowResetPassword(false)}
+              >
+                Volver
+              </Button>
+            </form>
+          )}
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

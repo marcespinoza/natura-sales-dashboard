@@ -42,6 +42,19 @@ export default function SignUpPage() {
 
     const supabase = createClient()
 
+    // Check if email already exists in profiles
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .single()
+
+    if (existingProfile) {
+      setError('Este correo ya está registrado. Por favor inicia sesión.')
+      setIsLoading(false)
+      return
+    }
+
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
