@@ -53,11 +53,11 @@ export async function signIn(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (user) {
-    // Check if user is an admin by email in admins table (case-insensitive)
+    // Check if user is an admin by email in admins table
     const { data: adminRecord } = await supabase
       .from('admins')
       .select('id')
-      .ilike('email', user.email?.toLowerCase() || '')
+      .eq('email', user.email?.toLowerCase() || '')
       .single()
 
     revalidatePath('/', 'layout')
@@ -155,7 +155,7 @@ export async function isUserAdmin(email?: string | null) {
   const { data: adminRecord } = await supabase
     .from('admins')
     .select('id')
-    .ilike('email', email.toLowerCase())
+    .eq('email', email.toLowerCase())
     .single()
 
   return !!adminRecord
@@ -179,11 +179,11 @@ export async function getAdmins() {
 export async function addAdmin(email: string, addedBy: string) {
   const supabase = await createClient()
   
-  // Check if already admin (case-insensitive)
+  // Check if already admin
   const { data: existing } = await supabase
     .from('admins')
     .select('id')
-    .ilike('email', email.toLowerCase().trim())
+    .eq('email', email.toLowerCase().trim())
     .single()
 
   if (existing) {

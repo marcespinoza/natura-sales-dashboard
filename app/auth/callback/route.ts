@@ -14,13 +14,15 @@ export async function GET(request: Request) {
       // Get user to determine redirect based on admin status
       const { data: { user } } = await supabase.auth.getUser()
       
-      if (user) {
-        // Check if user is admin by email in admins table (case-insensitive)
+      if (user && user.email) {
+        // Check if user is admin by email in admins table
         const { data: adminRecord } = await supabase
           .from('admins')
           .select('id')
-          .ilike('email', user.email?.toLowerCase() || '')
+          .eq('email', user.email.toLowerCase())
           .single()
+
+        console.log('[v0] Auth callback - user email:', user.email, 'adminRecord:', adminRecord)
 
         if (adminRecord) {
           return NextResponse.redirect(`${origin}/admin`)
