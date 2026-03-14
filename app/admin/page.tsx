@@ -50,45 +50,27 @@ export default function AdminPage() {
   }, [clients, searchTerm, sortBy])
 
   async function loadClients() {
-    const supabase = createClient()
+    try {
+      const response = await fetch('/api/admin/clients')
+      
+      if (!response.ok) {
+        console.error('[v0] Failed to load clients:', response.status)
+        setLoading(false)
+        return
+      }
 
-    // Get all clients (non-admins)
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('*')
-
-    // Get all admins to exclude them
-    const { data: admins } = await supabase
-      .from('admins')
-      .select('email')
-
-    const adminEmails = new Set((admins || []).map(a => a.email.toLowerCase()))
-
-    console.log('[v0] Profiles loaded:', profiles?.length, profiles)
-    console.log('[v0] Admin emails:', Array.from(adminEmails))
-
-    // Get all purchases with payments
-    const { data: purchases } = await supabase
-      .from('purchases')
-      .select(`
-        client_id,
-        total_price,
-        created_at,
-        payments(amount)
-      `)
-
-    // Get start of current month
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1)
-    startOfMonth.setHours(0, 0, 0, 0)
-
-    // Calculate stats for each client (exclude admins)
-    const clientsWithStats: ClientWithStats[] = (profiles || [])
-      .filter(p => {
-        // If profile has email, check if it's NOT an admin
-        if (p.email) {
-          return !adminEmails.has(p.email.toLowerCase())
-        }
+      const { clients, totals } = await response.json()
+      
+      console.log('[v0] Clients loaded:', clients.length, clients)
+      
+      setClients(clients)
+      setTotals(totals)
+    } catch (error) {
+      console.error('[v0] Error loading clients:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
         // If no email in profile, include them (they're clients)
         return true
       })
