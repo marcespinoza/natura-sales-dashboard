@@ -71,46 +71,6 @@ export default function AdminPage() {
       setLoading(false)
     }
   }
-        // If no email in profile, include them (they're clients)
-        return true
-      })
-      .map(client => {
-        const clientPurchases = purchases?.filter(p => p.client_id === client.id) || []
-        const totalSpent = clientPurchases.reduce((sum, p) => sum + Number(p.total_price), 0)
-        const totalPaid = clientPurchases.reduce((sum, p) => {
-          const paid = p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount), 0) || 0
-          return sum + paid
-        }, 0)
-        const monthlyPurchases = clientPurchases
-          .filter(p => new Date(p.created_at) >= startOfMonth)
-          .reduce((sum, p) => sum + Number(p.total_price), 0)
-
-        return {
-          id: client.id,
-          full_name: client.full_name,
-          phone: client.phone,
-          email: client.email,
-          points_balance: client.points_balance || 0,
-          created_at: client.created_at,
-          totalSpent,
-          totalPaid,
-          totalDue: totalSpent - totalPaid,
-          purchaseCount: clientPurchases.length,
-          monthlyPurchases,
-        }
-      })
-
-    console.log('[v0] Clients with stats (after filtering):', clientsWithStats.length, clientsWithStats)
-    
-    setClients(clientsWithStats)
-    setTotals({
-      totalClients: clientsWithStats.length,
-      totalSales: clientsWithStats.reduce((sum, c) => sum + c.totalSpent, 0),
-      totalCollected: clientsWithStats.reduce((sum, c) => sum + c.totalPaid, 0),
-      totalPending: clientsWithStats.reduce((sum, c) => sum + c.totalDue, 0),
-    })
-    setLoading(false)
-  }
 
   function filterAndSortClients() {
     let filtered = [...clients]
