@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardNav } from '@/components/dashboard/dashboard-nav'
 import { DashboardHeader } from '@/components/dashboard/dashboard-header'
+import { PushNotificationPrompt } from '@/components/dashboard/push-notification-prompt'
 
 export default async function DashboardLayout({
   children,
@@ -31,8 +32,8 @@ export default async function DashboardLayout({
   const { count: unreadCount } = await supabase
     .from('notifications')
     .select('*', { count: 'exact', head: true })
-    .or(`user_id.eq.${user.id},user_id.is.null`)
-    .eq('read', false)
+    .or(`recipient_id.eq.${user.id},is_global.eq.true`)
+    .eq('is_read', false)
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,6 +48,7 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
+      <PushNotificationPrompt />
     </div>
   )
 }
