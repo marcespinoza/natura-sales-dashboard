@@ -41,15 +41,15 @@ export default function NewNotificationPage() {
       .from('admins')
       .select('email')
     
-    const adminEmails = new Set(admins?.map(a => a.email) || [])
+    const adminEmails = new Set((admins || []).map(a => a.email.toLowerCase()))
     
     const { data: profiles } = await supabase
       .from('profiles')
       .select('*')
       .order('full_name')
     
-    // Filter out admins
-    return (profiles || []).filter(p => !adminEmails.has(p.email || ''))
+    // Filter out admins (case-insensitive)
+    return (profiles || []).filter(p => !adminEmails.has((p.email || '').toLowerCase()))
   })
 
   async function handleSubmit(e: React.FormEvent) {
@@ -80,7 +80,8 @@ export default function NewNotificationPage() {
       .insert(notificationData)
 
     if (error) {
-      toast.error('Error al enviar notificación')
+      console.error('[v0] Notification error:', error)
+      toast.error(`Error al enviar notificación: ${error.message}`)
       setIsSending(false)
       return
     }
