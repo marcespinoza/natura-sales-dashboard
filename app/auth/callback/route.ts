@@ -22,8 +22,6 @@ export async function GET(request: Request) {
           .eq('email', user.email.toLowerCase())
           .single()
 
-        console.log('[v0] Auth callback - user email:', user.email, 'adminRecord:', adminRecord)
-
         if (adminRecord) {
           return NextResponse.redirect(`${origin}/admin`)
         }

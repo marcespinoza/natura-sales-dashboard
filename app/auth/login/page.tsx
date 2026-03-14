@@ -50,8 +50,6 @@ export default function LoginPage() {
         .eq('email', user.email.toLowerCase())
         .single()
 
-      console.log('[v0] Login - user email:', user.email, 'adminRecord:', adminRecord)
-
       if (adminRecord) {
         router.push('/admin')
       } else {
