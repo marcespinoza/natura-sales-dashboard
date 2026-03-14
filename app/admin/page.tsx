@@ -62,7 +62,7 @@ export default function AdminPage() {
       .from('admins')
       .select('email')
 
-    const adminEmails = new Set(admins?.map(a => a.email) || [])
+    const adminEmails = new Set((admins || []).map(a => a.email.toLowerCase()))
 
     // Get all purchases with payments
     const { data: purchases } = await supabase
@@ -79,9 +79,16 @@ export default function AdminPage() {
     startOfMonth.setDate(1)
     startOfMonth.setHours(0, 0, 0, 0)
 
-    // Calculate stats for each client
+    // Calculate stats for each client (exclude admins)
     const clientsWithStats: ClientWithStats[] = (profiles || [])
-      .filter(p => !adminEmails.has(p.email || ''))
+      .filter(p => {
+        // If profile has email, check if it's NOT an admin
+        if (p.email) {
+          return !adminEmails.has(p.email.toLowerCase())
+        }
+        // If no email in profile, include them (they're clients)
+        return true
+      })
       .map(client => {
         const clientPurchases = purchases?.filter(p => p.client_id === client.id) || []
         const totalSpent = clientPurchases.reduce((sum, p) => sum + Number(p.total_price), 0)
