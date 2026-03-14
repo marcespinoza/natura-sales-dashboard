@@ -64,6 +64,9 @@ export default function AdminPage() {
 
     const adminEmails = new Set((admins || []).map(a => a.email.toLowerCase()))
 
+    console.log('[v0] Profiles loaded:', profiles?.length, profiles)
+    console.log('[v0] Admin emails:', Array.from(adminEmails))
+
     // Get all purchases with payments
     const { data: purchases } = await supabase
       .from('purchases')
@@ -115,6 +118,8 @@ export default function AdminPage() {
         }
       })
 
+    console.log('[v0] Clients with stats (after filtering):', clientsWithStats.length, clientsWithStats)
+    
     setClients(clientsWithStats)
     setTotals({
       totalClients: clientsWithStats.length,
