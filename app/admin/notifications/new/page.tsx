@@ -68,11 +68,11 @@ export default function NewNotificationPage() {
     setIsSending(true)
 
     const notificationData = {
-      user_id: recipientType === 'all' ? null : userId,
+      recipient_id: recipientType === 'all' ? null : userId,
       title,
       message,
-      type: notificationType,
-      read: false,
+      is_global: recipientType === 'all',
+      is_read: false,
     }
 
     const { error } = await supabase
