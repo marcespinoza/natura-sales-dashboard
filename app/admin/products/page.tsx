@@ -35,9 +35,12 @@ export default function ProductsPage() {
   // Form state
   const [name, setName] = useState('')
   const [sku, setSku] = useState('')
+  const [productLine, setProductLine] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('')
+  const [sizeMl, setSizeMl] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
   const [active, setActive] = useState(true)
 
   const supabase = createClient()
@@ -63,9 +66,12 @@ export default function ProductsPage() {
   function resetForm() {
     setName('')
     setSku('')
+    setProductLine('')
     setDescription('')
     setPrice('')
     setCategory('')
+    setSizeMl('')
+    setImageUrl('')
     setActive(true)
   }
 
@@ -73,9 +79,12 @@ export default function ProductsPage() {
     setEditingProduct(product)
     setName(product.name)
     setSku(product.sku || '')
+    setProductLine(product.product_line || '')
     setDescription(product.description || '')
     setPrice(product.price.toString())
     setCategory(product.category || '')
+    setSizeMl(product.size_ml?.toString() || '')
+    setImageUrl(product.image_url || '')
     setActive(product.active)
   }
 
@@ -90,9 +99,12 @@ export default function ProductsPage() {
     const productData = {
       name,
       sku: sku || null,
+      product_line: productLine || null,
       description: description || null,
       price: parseFloat(price),
       category: category || null,
+      size_ml: sizeMl ? parseInt(sizeMl) : null,
+      image_url: imageUrl || null,
       active,
     }
 
@@ -150,6 +162,50 @@ export default function ProductsPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
+          <Label htmlFor="product_line">Línea del Producto</Label>
+          <Input
+            id="product_line"
+            value={productLine}
+            onChange={(e) => setProductLine(e.target.value)}
+            placeholder="ej., Esenciales, Skincare, Capilar"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="size_ml">Tamaño (ml)</Label>
+          <Input
+            id="size_ml"
+            type="number"
+            min="0"
+            value={sizeMl}
+            onChange={(e) => setSizeMl(e.target.value)}
+            placeholder="ej., 30"
+          />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="image_url">URL de Imagen</Label>
+        <Input
+          id="image_url"
+          type="url"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          placeholder="https://ejemplo.com/imagen.jpg"
+        />
+        {imageUrl && (
+          <div className="mt-2 relative w-full h-40 rounded-lg overflow-hidden border">
+            <img 
+              src={imageUrl} 
+              alt={name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E'
+              }}
+            />
+          </div>
+        )}
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
           <Label htmlFor="price">Precio *</Label>
           <Input
             id="price"
@@ -171,8 +227,6 @@ export default function ProductsPage() {
           />
         </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="description">Descripción</Label>
         <Textarea
           id="description"
           value={description}
@@ -265,8 +319,8 @@ export default function ProductsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Producto</TableHead>
-                  <TableHead>SKU</TableHead>
-                  <TableHead>Categoría</TableHead>
+                  <TableHead>Línea</TableHead>
+                  <TableHead>Tamaño</TableHead>
                   <TableHead className="text-right">Precio</TableHead>
                   <TableHead className="text-center">Estado</TableHead>
                   <TableHead></TableHead>
@@ -276,22 +330,32 @@ export default function ProductsPage() {
                 {filteredProducts.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell>
-                      <div>
-                        <p className="font-medium">{product.name}</p>
-                        {product.description && (
-                          <p className="text-xs text-muted-foreground line-clamp-1">
-                            {product.description}
-                          </p>
+                      <div className="flex items-center gap-3">
+                        {product.image_url && (
+                          <img 
+                            src={product.image_url} 
+                            alt={product.name}
+                            className="h-10 w-10 rounded object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
                         )}
+                        <div>
+                          <p className="font-medium">{product.name}</p>
+                          {product.description && (
+                            <p className="text-xs text-muted-foreground line-clamp-1">
+                              {product.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {product.sku || '-'}
+                    <TableCell>
+                      {product.product_line || '-'}
                     </TableCell>
                     <TableCell>
-                      {product.category ? (
-                        <Badge variant="outline">{product.category}</Badge>
-                      ) : '-'}
+                      {product.size_ml ? `${product.size_ml} ml` : '-'}
                     </TableCell>
                     <TableCell className="text-right font-medium">
                       {formatCurrency(product.price)}
