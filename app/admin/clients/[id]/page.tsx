@@ -27,6 +27,7 @@ import {
   Bell,
   Calendar
 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/format'
 import Link from 'next/link'
 import { PaymentStatusBadge } from '@/components/dashboard/payment-status-badge'
@@ -67,6 +68,7 @@ interface Payment {
 export default function ClientDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const { toast } = useToast()
   const clientId = params.id as string
 
   const [client, setClient] = useState<ClientProfile | null>(null)
@@ -244,17 +246,25 @@ export default function ClientDetailPage() {
     e.preventDefault()
     if (!selectedPurchase) return
 
-    const paymentAmount = parseFloat(paymentAmount || '0')
-    const totalPaid = (selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0) + paymentAmount
+    const amount = parseFloat(paymentAmount || '0')
+    const alreadyPaid = selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0
     const totalDue = selectedPurchase.total_amount || 0
 
-    if (paymentAmount <= 0) {
-      alert('El monto del pago debe ser mayor a 0')
+    if (amount <= 0) {
+      toast({
+        title: 'Error',
+        description: 'El monto del pago debe ser mayor a 0',
+        variant: 'destructive',
+      })
       return
     }
 
-    if (totalPaid > totalDue) {
-      alert(`El pago no puede superar el total de la compra ($${totalDue.toFixed(2)}). Ya se han pagado $${(totalPaid - paymentAmount).toFixed(2)}.`)
+    if (alreadyPaid + amount > totalDue) {
+      toast({
+        title: 'Monto Inválido',
+        description: `El pago no puede superar el total de la compra. Total: $${totalDue.toFixed(2)}, Ya pagado: $${alreadyPaid.toFixed(2)}, Máximo a pagar ahora: $${(totalDue - alreadyPaid).toFixed(2)}`,
+        variant: 'destructive',
+      })
       return
     }
 
@@ -265,15 +275,23 @@ export default function ClientDetailPage() {
       .from('payments')
       .insert({
         purchase_id: selectedPurchase.id,
-        amount: paymentAmount,
+        amount: amount,
         payment_method: paymentMethod,
         notes: paymentNotes || null,
       })
 
     if (error) {
       console.error('[v0] Payment error:', error)
-      alert('Error al registrar pago: ' + error.message)
+      toast({
+        title: 'Error',
+        description: 'Error al registrar pago: ' + error.message,
+        variant: 'destructive',
+      })
     } else {
+      toast({
+        title: 'Éxito',
+        description: 'Pago registrado correctamente',
+      })
       setPaymentDialogOpen(false)
       setPaymentAmount('')
       setPaymentMethod('cash')
