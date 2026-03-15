@@ -203,8 +203,7 @@ export default function ClientDetailPage() {
 
       const quantity = parseInt(purchaseQuantity)
       const totalPrice = product.price * quantity
-      const pointsEarned = Math.floor(totalPrice / 10) // 1 punto por cada $10
-
+      
       console.log('[v0] Creating purchase:', { clientId, selectedProduct, quantity, totalPrice })
       
       const { error } = await supabase
@@ -215,7 +214,7 @@ export default function ClientDetailPage() {
           quantity: parseInt(purchaseQuantity),
           unit_price: product.price,
           total_amount: totalPrice,
-          points_earned: pointsEarned,
+          points_earned: 0, // No points yet, only when fully paid
         })
 
       if (error) {
@@ -225,17 +224,7 @@ export default function ClientDetailPage() {
         return
       }
 
-      console.log('[v0] Purchase created, updating points')
-      
-      // Update points balance
-      const { error: pointsError } = await supabase
-        .from('profiles')
-        .update({ points_balance: (client?.points_balance || 0) + pointsEarned })
-        .eq('id', clientId)
-
-      if (pointsError) {
-        console.error('[v0] Points update error:', pointsError)
-      }
+      console.log('[v0] Purchase created successfully')
 
       setPurchaseDialogOpen(false)
       setSelectedProduct('')
@@ -292,6 +281,43 @@ export default function ClientDetailPage() {
         console.error('[v0] Payment error:', error)
         setPaymentError('Error al registrar pago: ' + error.message)
       } else {
+        // Check if payment is now complete
+        const newTotalPaid = alreadyPaid + amount
+        const isNowComplete = newTotalPaid >= totalDue
+        
+        if (isNowComplete) {
+          console.log('[v0] Payment is now complete, awarding points')
+          // Get the settings to calculate points
+          const settingsData = await supabase
+            .from('settings')
+            .select('points_percentage')
+            .single()
+          
+          const pointsPercentage = settingsData.data?.points_percentage || 10
+          const pointsEarned = Math.floor((totalDue * pointsPercentage) / 100)
+          
+          // Update the purchase with points earned
+          await supabase
+            .from('purchases')
+            .update({ points_earned: pointsEarned })
+            .eq('id', selectedPurchase.id)
+          
+          // Update points balance
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('points_balance')
+            .eq('id', clientId)
+            .single()
+          
+          const newBalance = (profileData?.points_balance || 0) + pointsEarned
+          await supabase
+            .from('profiles')
+            .update({ points_balance: newBalance })
+            .eq('id', clientId)
+          
+          console.log('[v0] Points awarded:', pointsEarned)
+        }
+        
         toast({
           title: 'Éxito',
           description: 'Pago registrado correctamente',
