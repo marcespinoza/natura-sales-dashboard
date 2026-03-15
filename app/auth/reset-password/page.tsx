@@ -1,53 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
-import { Spinner } from '@/components/ui/spinner'
+import { Suspense } from 'react'
+import ResetPasswordForm from './reset-password-form'
 
 export default function ResetPasswordPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    // Verificar que hay un hash válido en la URL
-    const hash = window.location.hash
-    if (!hash || !hash.includes('type=recovery')) {
-      setError('Enlace inválido. Por favor, solicita un nuevo enlace de recuperación.')
-    }
-  }, [])
-
-  async function handleResetPassword(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden')
-      return
-    }
-
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
-      return
-    }
-
-    setIsLoading(true)
-
-    const supabase = createClient()
-
-    // Actualizar contraseña usando el token del hash
-    const { error: updateError } = await supabase.auth.updateUser({
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
+  )
+}
       password: password,
     })
 
