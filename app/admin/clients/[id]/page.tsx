@@ -429,8 +429,9 @@ export default function ClientDetailPage() {
   }
 
   function getPurchaseAmountDue(purchase: Purchase): number {
-    const paid = purchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0
-    return Number(purchase.total_price) - paid
+    const paid = purchase.payments?.reduce((s, p) => s + Number(p.amount || 0), 0) || 0
+    const total = Number(purchase.total_amount || 0)
+    return Math.max(0, total - paid)
   }
 
   if (loading) {
