@@ -149,42 +149,43 @@ export default function LoginPage() {
           {!showResetPassword ? (
             <>
               <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="tu@ejemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading || socialLoading !== null}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Ingresa tu contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading || socialLoading !== null}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading || socialLoading !== null}>
-              {isLoading ? <Spinner className="mr-2" /> : null}
-              Iniciar Sesión
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full text-sm"
-              onClick={() => setShowResetPassword(true)}
-            >
-              ¿Olvidaste tu contraseña?
-            </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="tu@ejemplo.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isLoading || socialLoading !== null}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Ingresa tu contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isLoading || socialLoading !== null}
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading || socialLoading !== null}>
+                  {isLoading ? <Spinner className="mr-2" /> : null}
+                  Iniciar Sesión
+                </Button>
+              </form>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full text-sm"
+                onClick={() => setShowResetPassword(true)}
+              >
+                ¿Olvidaste tu contraseña?
+              </Button>
             </>
           ) : (
             <form onSubmit={handleResetPassword} className="space-y-4">
