@@ -160,7 +160,7 @@ export default function ClientDetailPage() {
     setPayments(paymentsData || [])
 
     // Calculate stats
-    const totalSpent = purchasesData?.reduce((sum, p) => sum + Number(p.total_price), 0) || 0
+    const totalSpent = purchasesData?.reduce((sum, p) => sum + Number(p.total_amount), 0) || 0
     const totalPaid = purchasesData?.reduce((sum, p) => {
       return sum + (p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount), 0) || 0)
     }, 0) || 0
@@ -179,43 +179,65 @@ export default function ClientDetailPage() {
     if (!selectedProduct) return
 
     setSubmitting(true)
-    const supabase = createClient()
+    try {
+      const supabase = createClient()
 
-    const product = products.find(p => p.id === selectedProduct)
-    if (!product) return
+      const product = products.find(p => p.id === selectedProduct)
+      if (!product) {
+        console.error('[v0] Product not found')
+        alert('Producto no encontrado')
+        setSubmitting(false)
+        return
+      }
 
-    const quantity = parseInt(purchaseQuantity)
-    const totalPrice = product.price * quantity
-    const pointsEarned = Math.floor(totalPrice / 10) // 1 punto por cada $10
+      const quantity = parseInt(purchaseQuantity)
+      const totalPrice = product.price * quantity
+      const pointsEarned = Math.floor(totalPrice / 10) // 1 punto por cada $10
 
-    const { error } = await supabase
-      .from('purchases')
-      .insert({
-        client_id: clientId,
-        product_id: selectedProduct,
-        quantity: parseInt(purchaseQuantity),
-        unit_price: productPrice,
-        total_amount: productPrice * parseInt(purchaseQuantity),
-        points_earned: pointsEarned,
-      })
+      console.log('[v0] Creating purchase:', { clientId, selectedProduct, quantity, totalPrice })
+      
+      const { error } = await supabase
+        .from('purchases')
+        .insert({
+          client_id: clientId,
+          product_id: selectedProduct,
+          quantity: parseInt(purchaseQuantity),
+          unit_price: product.price,
+          total_amount: totalPrice,
+          points_earned: pointsEarned,
+        })
 
-    if (error) {
-      alert('Error al registrar compra: ' + error.message)
-    } else {
+      if (error) {
+        console.error('[v0] Purchase error:', error)
+        alert('Error al registrar compra: ' + error.message)
+        setSubmitting(false)
+        return
+      }
+
+      console.log('[v0] Purchase created, updating points')
+      
       // Update points balance
-      await supabase
+      const { error: pointsError } = await supabase
         .from('profiles')
         .update({ points_balance: (client?.points_balance || 0) + pointsEarned })
         .eq('id', clientId)
+
+      if (pointsError) {
+        console.error('[v0] Points update error:', pointsError)
+      }
 
       setPurchaseDialogOpen(false)
       setSelectedProduct('')
       setPurchaseQuantity('1')
       setPurchaseNotes('')
-      loadClientData()
+      await loadClientData()
+      console.log('[v0] Purchase completed successfully')
+    } catch (err) {
+      console.error('[v0] Exception:', err)
+      alert('Error inesperado: ' + (err instanceof Error ? err.message : String(err)))
+    } finally {
+      setSubmitting(false)
     }
-
-    setSubmitting(false)
   }
 
   async function handleRegisterPayment(e: React.FormEvent) {

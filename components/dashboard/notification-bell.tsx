@@ -64,7 +64,12 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
       }
       
       console.log('[v0] Notification marked as read successfully')
-      await mutate()
+      // Force revalidation with revalidate: true
+      await mutate(async (currentData) => {
+        return (currentData || []).map(n => 
+          n.id === notificationId ? { ...n, is_read: true } : n
+        )
+      }, false)
     } catch (err) {
       console.error('[v0] Exception:', err)
     }
@@ -76,12 +81,16 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
     const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id)
     if (unreadIds.length === 0) return
 
-    await supabase
+    const { error } = await supabase
       .from('notifications')
       .update({ is_read: true })
       .in('id', unreadIds)
     
-    mutate()
+    if (!error) {
+      await mutate(async (currentData) => {
+        return (currentData || []).map(n => ({ ...n, is_read: true }))
+      }, false)
+    }
   }
 
   return (
