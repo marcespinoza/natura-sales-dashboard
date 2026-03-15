@@ -94,8 +94,9 @@ export default function ClientDetailPage() {
 
   // Payment form
   const [paymentAmount, setPaymentAmount] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<string>('cash')
+  const [paymentMethod, setPaymentMethod] = useState('cash')
   const [paymentNotes, setPaymentNotes] = useState('')
+  const [paymentError, setPaymentError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   // Notification form
@@ -126,7 +127,6 @@ export default function ClientDetailPage() {
   }
 
   async function loadClientData() {
-    console.log('[v0] Loading client data for:', clientId)
     const supabase = createClient()
 
     // Get client profile
@@ -174,7 +174,7 @@ export default function ClientDetailPage() {
       return sum + (p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount || 0), 0) || 0)
     }, 0) || 0
 
-    console.log('[v0] Stats:', { totalSpent, totalPaid, totalDue: totalSpent - totalPaid, purchasesCount: purchasesData?.length, purchasesData: purchasesData?.slice(0, 2) })
+    console.log('[v0] Stats:', { totalSpent, totalPaid, totalDue: totalSpent - totalPaid, purchasesCount: purchasesData?.length })
 
     setStats({
       totalSpent,
@@ -252,15 +252,11 @@ export default function ClientDetailPage() {
   }
 
   async function handleRegisterPayment(e: React.FormEvent) {
-    console.log('[v0] handleRegisterPayment called')
     e.preventDefault()
+    setPaymentError('')
+    
     if (!selectedPurchase) {
-      console.log('[v0] No selected purchase')
-      toast({
-        title: 'Error',
-        description: 'Selecciona una compra primero',
-        variant: 'destructive',
-      })
+      setPaymentError('Selecciona una compra primero')
       return
     }
 
@@ -268,25 +264,14 @@ export default function ClientDetailPage() {
     const alreadyPaid = selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount || 0), 0) || 0
     const totalDue = selectedPurchase.total_amount || 0
 
-    console.log('[v0] Payment validation:', { amount, alreadyPaid, totalDue })
-
     if (amount <= 0) {
-      toast({
-        title: 'Error',
-        description: 'El monto del pago debe ser mayor a 0',
-        variant: 'destructive',
-      })
+      setPaymentError('El monto del pago debe ser mayor a 0')
       return
     }
 
     if (alreadyPaid + amount > totalDue) {
       const maxAllowed = Math.max(0, totalDue - alreadyPaid)
-      console.log('[v0] Payment EXCEEDS TOTAL - showing toast:', { alreadyPaid, amount, totalDue, maxAllowed })
-      toast({
-        title: 'Monto Inválido',
-        description: `El pago no puede superar el total de la compra. Total: $${totalDue.toFixed(2)}, Ya pagado: $${alreadyPaid.toFixed(2)}, Máximo a pagar ahora: $${maxAllowed.toFixed(2)}`,
-        variant: 'destructive',
-      })
+      setPaymentError(`El pago no puede superar el total. Total: $${totalDue.toFixed(2)}, Ya pagado: $${alreadyPaid.toFixed(2)}, Máximo: $${maxAllowed.toFixed(2)}`)
       return
     }
 
@@ -305,11 +290,7 @@ export default function ClientDetailPage() {
 
       if (error) {
         console.error('[v0] Payment error:', error)
-        toast({
-          title: 'Error',
-          description: 'Error al registrar pago: ' + error.message,
-          variant: 'destructive',
-        })
+        setPaymentError('Error al registrar pago: ' + error.message)
       } else {
         toast({
           title: 'Éxito',
@@ -320,15 +301,12 @@ export default function ClientDetailPage() {
         setPaymentMethod('cash')
         setPaymentNotes('')
         setSelectedPurchase(null)
+        setPaymentError('')
         await loadClientData()
       }
     } catch (err) {
       console.error('[v0] Exception:', err)
-      toast({
-        title: 'Error',
-        description: 'Error inesperado: ' + (err instanceof Error ? err.message : String(err)),
-        variant: 'destructive',
-      })
+      setPaymentError('Error inesperado: ' + (err instanceof Error ? err.message : String(err)))
     } finally {
       setSubmitting(false)
     }
@@ -637,8 +615,8 @@ export default function ClientDetailPage() {
               </div>
               <div className="border-t pt-2 flex justify-between">
                 <span className="text-sm font-medium">Saldo pendiente:</span>
-                <span className={`font-bold ${stats.totalDue > 0 ? 'text-status-pending' : 'text-status-paid'}`}>
-                  {formatCurrency(stats.totalDue)}
+                <span className={`font-bold ${(stats.totalSpent - stats.totalPaid) > 0 ? 'text-status-pending' : 'text-status-paid'}`}>
+                  {formatCurrency(Math.max(0, stats.totalSpent - stats.totalPaid))}
                 </span>
               </div>
             </div>
@@ -789,6 +767,11 @@ export default function ClientDetailPage() {
                                         <p className="text-xs text-muted-foreground">
                                           Máximo: {formatCurrency(amountDue)}
                                         </p>
+                                        {paymentError && (
+                                          <p className="text-sm font-medium text-destructive bg-destructive/10 p-2 rounded">
+                                            {paymentError}
+                                          </p>
+                                        )}
                                       </div>
                                       <div className="space-y-2">
                                         <Label>Método de Pago</Label>
