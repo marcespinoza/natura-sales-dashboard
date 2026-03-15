@@ -18,6 +18,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [socialLoading, setSocialLoading] = useState<'google' | null>(null)
   const [showResetPassword, setShowResetPassword] = useState(false)
   const [resetEmail, setResetEmail] = useState('')
   const [resetMessage, setResetMessage] = useState<string | null>(null)
