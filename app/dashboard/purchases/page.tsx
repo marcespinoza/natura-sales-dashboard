@@ -46,58 +46,113 @@ export default async function PurchasesPage() {
         </CardHeader>
         <CardContent>
           {allPurchases.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Producto</TableHead>
-                    <TableHead className="text-center">Cant.</TableHead>
-                    <TableHead className="text-right">Precio Unit.</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="text-right">Pagado</TableHead>
-                    <TableHead className="text-center">Estado</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {allPurchases.map((purchase) => {
-                    const paid = purchase.payments?.reduce((s: number, p: { amount: number }) => s + Number(p.amount), 0) || 0
-                    const total = Number(purchase.total_amount || 0)
-                    const status: PaymentStatus = paid >= total ? 'paid' : paid > 0 ? 'partial' : 'pending'
-                    
-                    return (
-                      <TableRow key={purchase.id}>
-                        <TableCell className="font-medium whitespace-nowrap">
-                          {formatDate(purchase.created_at)}
-                        </TableCell>
-                        <TableCell className="max-w-xs">
-                          <div className="truncate">
-                            <p className="font-medium truncate">{purchase.product?.name}</p>
-                            {purchase.product?.category && (
-                              <p className="text-xs text-muted-foreground truncate">
-                                {purchase.product.category}
-                              </p>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center whitespace-nowrap">{purchase.quantity}</TableCell>
-                        <TableCell className="text-right whitespace-nowrap">
-                          {formatCurrency(purchase.unit_price)}
-                        </TableCell>
-                        <TableCell className="text-right font-medium whitespace-nowrap">
-                          {formatCurrency(purchase.total_amount)}
-                        </TableCell>
-                        <TableCell className="text-right whitespace-nowrap">
-                          {formatCurrency(paid)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <PaymentStatusBadge status={status} />
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+            <div className="space-y-3">
+              {/* Desktop view */}
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Fecha</TableHead>
+                      <TableHead>Producto</TableHead>
+                      <TableHead className="text-center">Cant.</TableHead>
+                      <TableHead className="text-right">Precio Unit.</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="text-right">Pagado</TableHead>
+                      <TableHead className="text-center">Estado</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {allPurchases.map((purchase) => {
+                      const paid = purchase.payments?.reduce((s: number, p: { amount: number }) => s + Number(p.amount), 0) || 0
+                      const total = Number(purchase.total_amount || 0)
+                      const status: PaymentStatus = paid >= total ? 'paid' : paid > 0 ? 'partial' : 'pending'
+                      
+                      return (
+                        <TableRow key={purchase.id}>
+                          <TableCell className="font-medium whitespace-nowrap">
+                            {formatDate(purchase.created_at)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="truncate">
+                              <p className="font-medium truncate">{purchase.product?.name}</p>
+                              {purchase.product?.category && (
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {purchase.product.category}
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center whitespace-nowrap">{purchase.quantity}</TableCell>
+                          <TableCell className="text-right whitespace-nowrap">
+                            {formatCurrency(purchase.unit_price)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium whitespace-nowrap">
+                            {formatCurrency(purchase.total_amount)}
+                          </TableCell>
+                          <TableCell className="text-right whitespace-nowrap">
+                            {formatCurrency(paid)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <PaymentStatusBadge status={status} />
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile view */}
+              <div className="md:hidden space-y-3">
+                {allPurchases.map((purchase) => {
+                  const paid = purchase.payments?.reduce((s: number, p: { amount: number }) => s + Number(p.amount), 0) || 0
+                  const total = Number(purchase.total_amount || 0)
+                  const status: PaymentStatus = paid >= total ? 'paid' : paid > 0 ? 'partial' : 'pending'
+                  
+                  return (
+                    <div key={purchase.id} className="border rounded-lg p-4 space-y-3">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex-1">
+                          <p className="font-medium leading-tight">{purchase.product?.name}</p>
+                          {purchase.product?.category && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {purchase.product.category}
+                            </p>
+                          )}
+                        </div>
+                        <PaymentStatusBadge status={status} />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Fecha</p>
+                          <p className="font-medium">{formatDate(purchase.created_at)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Cantidad</p>
+                          <p className="font-medium">{purchase.quantity}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Precio Unitario</p>
+                          <p className="font-medium">{formatCurrency(purchase.unit_price)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Total</p>
+                          <p className="font-medium">{formatCurrency(purchase.total_amount)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Pagado</p>
+                          <p className="font-medium">{formatCurrency(paid)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Pendiente</p>
+                          <p className="font-medium">{formatCurrency(Math.max(0, total - paid))}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           ) : (
             <div className="text-center py-12">
