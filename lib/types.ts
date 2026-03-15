@@ -15,14 +15,14 @@ export interface Profile {
 export interface Product {
   id: string
   name: string
-  sku: string | null
   product_line: string | null
   description: string | null
   price: number
   category: string | null
   image_url: string | null
   size_ml: number | null
-  active: boolean
+  points_value: number | null
+  is_active: boolean
   created_at: string
 }
 

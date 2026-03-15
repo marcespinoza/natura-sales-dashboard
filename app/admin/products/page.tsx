@@ -34,14 +34,13 @@ export default function ProductsPage() {
   
   // Form state
   const [name, setName] = useState('')
-  const [sku, setSku] = useState('')
   const [productLine, setProductLine] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('')
   const [sizeMl, setSizeMl] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [active, setActive] = useState(true)
+  const [isActive, setIsActive] = useState(true)
 
   const supabase = createClient()
 
@@ -59,33 +58,31 @@ export default function ProductsPage() {
   // Filter products by search
   const filteredProducts = products?.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.sku?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.product_line?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     product.category?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
 
   function resetForm() {
     setName('')
-    setSku('')
     setProductLine('')
     setDescription('')
     setPrice('')
     setCategory('')
     setSizeMl('')
     setImageUrl('')
-    setActive(true)
+    setIsActive(true)
   }
 
   function openEdit(product: Product) {
     setEditingProduct(product)
     setName(product.name)
-    setSku(product.sku || '')
     setProductLine(product.product_line || '')
     setDescription(product.description || '')
     setPrice(product.price.toString())
     setCategory(product.category || '')
     setSizeMl(product.size_ml?.toString() || '')
     setImageUrl(product.image_url || '')
-    setActive(product.active)
+    setIsActive(product.is_active)
   }
 
   async function handleSave() {
@@ -98,14 +95,13 @@ export default function ProductsPage() {
 
     const productData = {
       name,
-      sku: sku || null,
       product_line: productLine || null,
       description: description || null,
       price: parseFloat(price),
       category: category || null,
       size_ml: sizeMl ? parseInt(sizeMl) : null,
       image_url: imageUrl || null,
-      active,
+      is_active: isActive,
     }
 
     if (editingProduct) {
@@ -241,11 +237,11 @@ export default function ProductsPage() {
       </div>
       <div className="flex items-center gap-2">
         <Switch
-          id="active"
-          checked={active}
-          onCheckedChange={setActive}
+          id="is_active"
+          checked={isActive}
+          onCheckedChange={setIsActive}
         />
-        <Label htmlFor="active">Activo (visible en lista de productos)</Label>
+        <Label htmlFor="is_active">Activo (visible en lista de productos)</Label>
       </div>
     </div>
   )
@@ -365,8 +361,8 @@ export default function ProductsPage() {
                       {formatCurrency(product.price)}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge variant={product.active ? 'default' : 'secondary'}>
-                        {product.active ? 'Activo' : 'Inactivo'}
+                      <Badge variant={product.is_active ? 'default' : 'secondary'}>
+                        {product.is_active ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </TableCell>
                     <TableCell>
