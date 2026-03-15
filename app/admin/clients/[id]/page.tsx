@@ -87,9 +87,6 @@ export default function ClientDetailPage() {
   const [purchaseNotes, setPurchaseNotes] = useState('')
 
   // Payment dialog
-  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
-  const [selectedPurchase, setSelectedPurchase] = useState<Purchase | null>(null)
-
   // Delete purchase
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [purchaseToDelete, setPurchaseToDelete] = useState<Purchase | null>(null)
