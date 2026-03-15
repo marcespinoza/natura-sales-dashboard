@@ -1,8 +1,9 @@
 import { format, formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 
-export function formatCurrency(amount: number | string): string {
-  const num = typeof amount === 'string' ? parseFloat(amount) : amount
+export function formatCurrency(amount: number | string | undefined | null): string {
+  const num = typeof amount === 'string' ? parseFloat(amount) : Number(amount) || 0
+  if (isNaN(num)) return '$0.00'
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: 'MXN',

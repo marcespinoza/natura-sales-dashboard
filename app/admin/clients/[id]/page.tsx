@@ -244,6 +244,20 @@ export default function ClientDetailPage() {
     e.preventDefault()
     if (!selectedPurchase) return
 
+    const paymentAmount = parseFloat(paymentAmount || '0')
+    const totalPaid = (selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0) + paymentAmount
+    const totalDue = selectedPurchase.total_amount || 0
+
+    if (paymentAmount <= 0) {
+      alert('El monto del pago debe ser mayor a 0')
+      return
+    }
+
+    if (totalPaid > totalDue) {
+      alert(`El pago no puede superar el total de la compra ($${totalDue.toFixed(2)}). Ya se han pagado $${(totalPaid - paymentAmount).toFixed(2)}.`)
+      return
+    }
+
     setSubmitting(true)
     const supabase = createClient()
 
@@ -251,12 +265,13 @@ export default function ClientDetailPage() {
       .from('payments')
       .insert({
         purchase_id: selectedPurchase.id,
-        amount: parseFloat(paymentAmount),
+        amount: paymentAmount,
         payment_method: paymentMethod,
         notes: paymentNotes || null,
       })
 
     if (error) {
+      console.error('[v0] Payment error:', error)
       alert('Error al registrar pago: ' + error.message)
     } else {
       setPaymentDialogOpen(false)
@@ -264,7 +279,7 @@ export default function ClientDetailPage() {
       setPaymentMethod('cash')
       setPaymentNotes('')
       setSelectedPurchase(null)
-      loadClientData()
+      await loadClientData()
     }
 
     setSubmitting(false)
@@ -315,7 +330,7 @@ export default function ClientDetailPage() {
 
   function getPaymentStatus(purchase: Purchase): PaymentStatus {
     const paid = purchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0
-    if (paid >= Number(purchase.total_price)) return 'paid'
+    if (paid >= Number(purchase.total_amount)) return 'paid'
     if (paid > 0) return 'partial'
     return 'pending'
   }
@@ -655,8 +670,22 @@ export default function ClientDetailPage() {
                                       </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-4 py-4">
+                                      <div className="rounded-lg bg-muted p-3 space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                          <span className="text-muted-foreground">Total Compra:</span>
+                                          <span className="font-medium">{formatCurrency(purchase.total_amount)}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-muted-foreground">Ya Pagado:</span>
+                                          <span className="font-medium">{formatCurrency((purchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0))}</span>
+                                        </div>
+                                        <div className="border-t pt-2 flex justify-between text-base">
+                                          <span className="font-semibold">Pendiente:</span>
+                                          <span className="font-bold text-primary">{formatCurrency(amountDue)}</span>
+                                        </div>
+                                      </div>
                                       <div className="space-y-2">
-                                        <Label>Monto</Label>
+                                        <Label>Monto a Pagar</Label>
                                         <Input
                                           type="number"
                                           step="0.01"
@@ -665,10 +694,14 @@ export default function ClientDetailPage() {
                                           value={paymentAmount}
                                           onChange={(e) => setPaymentAmount(e.target.value)}
                                           required
+                                          placeholder="0.00"
                                         />
+                                        <p className="text-xs text-muted-foreground">
+                                          Máximo: {formatCurrency(amountDue)}
+                                        </p>
                                       </div>
                                       <div className="space-y-2">
-                                        <Label>Metodo de Pago</Label>
+                                        <Label>Método de Pago</Label>
                                         <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                                           <SelectTrigger>
                                             <SelectValue />

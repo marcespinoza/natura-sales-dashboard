@@ -30,6 +30,12 @@ interface Admin {
   created_at: string
 }
 
+interface AppSettings {
+  id: number
+  points_percentage: number
+  updated_at: string
+}
+
 export default function AdminSettingsPage() {
   const router = useRouter()
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -39,6 +45,10 @@ export default function AdminSettingsPage() {
   
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
+
+  // Settings
+  const [pointsPercentage, setPointsPercentage] = useState(10)
+  const [isSavingSettings, setIsSavingSettings] = useState(false)
 
   // Admin management
   const [admins, setAdmins] = useState<Admin[]>([])
@@ -80,12 +90,47 @@ export default function AdminSettingsPage() {
       if (adminsData) {
         setAdmins(adminsData)
       }
+
+      // Load settings
+      const { data: settingsData } = await supabase
+        .from('settings')
+        .select('*')
+        .single()
+
+      if (settingsData) {
+        setPointsPercentage(settingsData.points_percentage || 10)
+      }
       
       setIsLoading(false)
     }
 
     loadData()
   }, [supabase, router])
+
+  async function handleSaveSettings() {
+    if (pointsPercentage < 0 || pointsPercentage > 100) {
+      toast.error('El porcentaje debe estar entre 0 y 100')
+      return
+    }
+
+    setIsSavingSettings(true)
+
+    const { error } = await supabase
+      .from('settings')
+      .upsert({
+        id: 1,
+        points_percentage: pointsPercentage,
+        updated_at: new Date().toISOString(),
+      })
+
+    setIsSavingSettings(false)
+
+    if (error) {
+      toast.error('Error al guardar configuración: ' + error.message)
+    } else {
+      toast.success('Configuración guardada correctamente')
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -306,6 +351,44 @@ export default function AdminSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Admin Management Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Configuración de Puntos de Recompensa</CardTitle>
+          <CardDescription>
+            Configura el porcentaje de puntos a otorgar por cada compra
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="points">Porcentaje de Puntos (%)</Label>
+            <div className="flex gap-4 items-end">
+              <div className="flex-1 space-y-2">
+                <Input
+                  id="points"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value={pointsPercentage}
+                  onChange={(e) => setPointsPercentage(parseFloat(e.target.value) || 0)}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Ejemplo: En una compra de $100, se darán {(100 * pointsPercentage / 100).toFixed(0)} puntos
+                </p>
+              </div>
+              <Button 
+                onClick={handleSaveSettings} 
+                disabled={isSavingSettings}
+              >
+                {isSavingSettings ? <Spinner className="mr-2 h-4 w-4" /> : null}
+                Guardar
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Admin Management Section */}
       <Card>
