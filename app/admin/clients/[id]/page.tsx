@@ -113,7 +113,7 @@ export default function ClientDetailPage() {
     const { data } = await supabase
       .from('products')
       .select('id, name, price')
-      .eq('active', true)
+      .eq('is_active', true)
       .order('name')
     setProducts(data || [])
   }
