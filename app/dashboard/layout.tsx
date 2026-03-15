@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardNav } from '@/components/dashboard/dashboard-nav'
 import { DashboardHeader } from '@/components/dashboard/dashboard-header'
-import { PushNotificationPrompt } from '@/components/dashboard/push-notification-prompt'
 
 export default async function DashboardLayout({
   children,
@@ -48,7 +47,6 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
-      <PushNotificationPrompt />
     </div>
   )
 }

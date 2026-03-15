@@ -162,7 +162,102 @@ export default function ProductsPage() {
                 Agrega un nuevo producto a tu catálogo
               </DialogDescription>
             </DialogHeader>
-            <ProductForm />
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-2">
+                <Label htmlFor="add-name">Nombre del Producto *</Label>
+                <Input
+                  id="add-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="ej., Aceite Esencial - Lavanda"
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="add-product_line">Línea del Producto</Label>
+                  <Input
+                    id="add-product_line"
+                    value={productLine}
+                    onChange={(e) => setProductLine(e.target.value)}
+                    placeholder="ej., Esenciales, Skincare, Capilar"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="add-size_ml">Tamaño (ml)</Label>
+                  <Input
+                    id="add-size_ml"
+                    type="number"
+                    min="0"
+                    value={sizeMl}
+                    onChange={(e) => setSizeMl(e.target.value)}
+                    placeholder="ej., 30"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-image_url">URL de Imagen</Label>
+                <Input
+                  id="add-image_url"
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                />
+                {imageUrl && (
+                  <div className="mt-2 relative w-full h-40 rounded-lg overflow-hidden border">
+                    <img 
+                      src={imageUrl} 
+                      alt={name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E'
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="add-price">Precio *</Label>
+                  <Input
+                    id="add-price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="add-category">Categoría</Label>
+                  <Input
+                    id="add-category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="ej., Aceites Esenciales"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-description">Descripción</Label>
+                <Textarea
+                  id="add-description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Descripción del producto..."
+                  rows={3}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="add-is_active"
+                  checked={isActive}
+                  onCheckedChange={setIsActive}
+                />
+                <Label htmlFor="add-is_active">Activo (visible en lista de productos)</Label>
+              </div>
+            </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddOpen(false)}>
                 Cancelar
