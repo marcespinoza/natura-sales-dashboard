@@ -32,7 +32,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
   const supabase = createClient()
 
   const { data: notifications, mutate } = useSWR<Notification[]>(
-    `notifications-${userId}`,
+    open ? `notifications-${userId}` : null,
     async () => {
       const { data } = await supabase
         .from('notifications')
@@ -44,7 +44,8 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
     },
     {
       fallbackData: [],
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
+      revalidateOnMount: true,
     }
   )
 
@@ -52,7 +53,6 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
 
   async function markAsRead(notificationId: string) {
     try {
-      console.log('[v0] Marking notification as read:', notificationId)
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
@@ -63,13 +63,8 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
         return
       }
       
-      console.log('[v0] Notification marked as read successfully')
-      // Force revalidation with revalidate: true
-      await mutate(async (currentData) => {
-        return (currentData || []).map(n => 
-          n.id === notificationId ? { ...n, is_read: true } : n
-        )
-      }, false)
+      // Revalidate from server to get latest state
+      await mutate()
     } catch (err) {
       console.error('[v0] Exception:', err)
     }
@@ -87,9 +82,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
       .in('id', unreadIds)
     
     if (!error) {
-      await mutate(async (currentData) => {
-        return (currentData || []).map(n => ({ ...n, is_read: true }))
-      }, false)
+      await mutate()
     }
   }
 

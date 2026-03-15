@@ -46,57 +46,59 @@ export default async function PurchasesPage() {
         </CardHeader>
         <CardContent>
           {allPurchases.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead>Producto</TableHead>
-                  <TableHead className="text-center">Cant.</TableHead>
-                  <TableHead className="text-right">Precio Unit.</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right">Pagado</TableHead>
-                  <TableHead className="text-center">Estado</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allPurchases.map((purchase) => {
-                  const paid = purchase.payments?.reduce((s: number, p: { amount: number }) => s + Number(p.amount), 0) || 0
-                  const total = Number(purchase.total_price)
-                  const status: PaymentStatus = paid >= total ? 'paid' : paid > 0 ? 'partial' : 'pending'
-                  
-                  return (
-                    <TableRow key={purchase.id}>
-                      <TableCell className="font-medium">
-                        {formatDate(purchase.created_at)}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{purchase.product?.name}</p>
-                          {purchase.product?.category && (
-                            <p className="text-xs text-muted-foreground">
-                              {purchase.product.category}
-                            </p>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">{purchase.quantity}</TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(purchase.unit_price)}
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        {formatCurrency(purchase.total_price)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(paid)}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <PaymentStatusBadge status={status} />
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Producto</TableHead>
+                    <TableHead className="text-center">Cant.</TableHead>
+                    <TableHead className="text-right">Precio Unit.</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead className="text-right">Pagado</TableHead>
+                    <TableHead className="text-center">Estado</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {allPurchases.map((purchase) => {
+                    const paid = purchase.payments?.reduce((s: number, p: { amount: number }) => s + Number(p.amount), 0) || 0
+                    const total = Number(purchase.total_amount || 0)
+                    const status: PaymentStatus = paid >= total ? 'paid' : paid > 0 ? 'partial' : 'pending'
+                    
+                    return (
+                      <TableRow key={purchase.id}>
+                        <TableCell className="font-medium whitespace-nowrap">
+                          {formatDate(purchase.created_at)}
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="truncate">
+                            <p className="font-medium truncate">{purchase.product?.name}</p>
+                            {purchase.product?.category && (
+                              <p className="text-xs text-muted-foreground truncate">
+                                {purchase.product.category}
+                              </p>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center whitespace-nowrap">{purchase.quantity}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
+                          {formatCurrency(purchase.unit_price)}
+                        </TableCell>
+                        <TableCell className="text-right font-medium whitespace-nowrap">
+                          {formatCurrency(purchase.total_amount)}
+                        </TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
+                          {formatCurrency(paid)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <PaymentStatusBadge status={status} />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           ) : (
             <div className="text-center py-12">
               <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
