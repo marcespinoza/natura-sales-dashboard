@@ -37,7 +37,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
       const { data } = await supabase
         .from('notifications')
         .select('*')
-        .or(`user_id.eq.${userId},user_id.is.null`)
+        .or(`recipient_id.eq.${userId},is_global.eq.true`)
         .order('created_at', { ascending: false })
         .limit(20)
       return data || []
@@ -48,12 +48,12 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
     }
   )
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? initialUnreadCount
+  const unreadCount = notifications?.filter((n) => !n.is_read).length ?? initialUnreadCount
 
   async function markAsRead(notificationId: string) {
     await supabase
       .from('notifications')
-      .update({ read: true })
+      .update({ is_read: true })
       .eq('id', notificationId)
     
     mutate()
@@ -62,12 +62,12 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
   async function markAllAsRead() {
     if (!notifications) return
     
-    const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id)
+    const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id)
     if (unreadIds.length === 0) return
 
     await supabase
       .from('notifications')
-      .update({ read: true })
+      .update({ is_read: true })
       .in('id', unreadIds)
     
     mutate()
@@ -107,7 +107,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
                   <div
                     key={notification.id}
                     className={`flex gap-3 p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
-                      !notification.read ? 'bg-muted/30' : ''
+                      !notification.is_read ? 'bg-muted/30' : ''
                     }`}
                     onClick={() => markAsRead(notification.id)}
                   >
@@ -120,7 +120,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 space-y-1">
-                      <p className={`text-sm leading-tight ${!notification.read ? 'font-medium' : ''}`}>
+                      <p className={`text-sm leading-tight ${!notification.is_read ? 'font-medium' : ''}`}>
                         {notification.title}
                       </p>
                       <p className="text-xs text-muted-foreground line-clamp-2">
@@ -130,7 +130,7 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
                         {formatRelativeTime(notification.created_at)}
                       </p>
                     </div>
-                    {!notification.read && (
+                    {!notification.is_read && (
                       <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1" />
                     )}
                   </div>
