@@ -60,7 +60,12 @@ export function usePushNotifications() {
       // Get VAPID public key
       console.log('[v0] Fetching VAPID public key...')
       const response = await fetch('/api/push/vapid-public-key')
-      const { publicKey } = await response.json()
+      if (!response.ok) {
+        console.error('[v0] Failed to fetch VAPID key:', response.status)
+        return false
+      }
+      const responseData = await response.json()
+      const publicKey = responseData?.publicKey
       console.log('[v0] VAPID public key received:', publicKey ? 'yes' : 'no')
 
       if (!publicKey) {
@@ -89,14 +94,14 @@ export function usePushNotifications() {
       const subscriptionJson = subscription.toJSON()
       
       console.log('[v0] Saving subscription to database...')
-      const { error } = await supabase.from('push_subscriptions').upsert({
-        user_id: user.id,
-        endpoint: subscription.endpoint,
-        p256dh: subscriptionJson.keys?.p256dh || '',
-        auth: subscriptionJson.keys?.auth || '',
-      }, {
-        onConflict: 'user_id,endpoint',
-      })
+      const { error } = await supabase
+        .from('push_subscriptions')
+        .upsert({
+          user_id: user.id,
+          endpoint: subscription.endpoint,
+          p256dh: subscriptionJson.keys?.p256dh || '',
+          auth: subscriptionJson.keys?.auth || '',
+        })
 
       if (error) {
         console.error('[v0] Error saving subscription:', error)
@@ -107,7 +112,8 @@ export function usePushNotifications() {
       setIsSubscribed(true)
       return true
     } catch (error) {
-      console.error('[v0] Error subscribing to push:', error)
+      console.error('[v0] Error subscribing to push:', error instanceof Error ? error.message : String(error))
+      console.error('[v0] Full error:', error)
       return false
     } finally {
       setIsLoading(false)
