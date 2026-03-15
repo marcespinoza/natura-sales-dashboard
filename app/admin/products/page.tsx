@@ -148,15 +148,6 @@ export default function ProductsPage() {
             placeholder="ej., Aceite Esencial - Lavanda"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="sku">SKU</Label>
-          <Input
-            id="sku"
-            value={sku}
-            onChange={(e) => setSku(e.target.value)}
-            placeholder="ej., NAT-AE-001"
-          />
-        </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
