@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Bell, Plus } from 'lucide-react'
+import { Bell, Plus, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 export default function NotificationsPage() {
@@ -18,15 +18,27 @@ export default function NotificationsPage() {
             Envía y administra notificaciones a clientes
           </p>
         </div>
-        <Button 
-          asChild 
-          className="w-full sm:w-auto"
-        >
-          <Link href="/admin/notifications/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Nueva Notificación
-          </Link>
-        </Button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Button 
+            asChild 
+            variant="outline"
+            className="flex-1 sm:flex-none"
+          >
+            <Link href="/admin/notifications/history">
+              <Clock className="mr-2 h-4 w-4" />
+              Historial
+            </Link>
+          </Button>
+          <Button 
+            asChild 
+            className="flex-1 sm:flex-none"
+          >
+            <Link href="/admin/notifications/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Nueva
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Info Cards */}

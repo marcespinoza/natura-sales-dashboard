@@ -73,6 +73,7 @@ export default function NewNotificationPage() {
       message,
       is_global: recipientType === 'all',
       is_read: false,
+      notification_type: notificationType,
     }
 
     const { error } = await supabase
@@ -85,6 +86,20 @@ export default function NewNotificationPage() {
       setIsSending(false)
       return
     }
+
+    // Also save to notification_history
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    await supabase
+      .from('notification_history')
+      .insert({
+        sent_by: user?.id,
+        recipient_id: recipientType === 'all' ? null : userId,
+        title,
+        message,
+        notification_type: notificationType,
+        is_global: recipientType === 'all',
+      })
 
     toast.success(
       recipientType === 'all'

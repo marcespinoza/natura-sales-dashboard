@@ -253,6 +253,8 @@ export default function ClientDetailPage() {
     setSubmitting(true)
     const supabase = createClient()
 
+    const { data: { user } } = await supabase.auth.getUser()
+
     const { error } = await supabase
       .from('notifications')
       .insert({
@@ -260,18 +262,32 @@ export default function ClientDetailPage() {
         title: notifTitle,
         message: notifMessage,
         is_global: false,
+        notification_type: notifType,
       })
 
     if (error) {
       alert('Error al enviar notificacion: ' + error.message)
-    } else {
-      setNotificationDialogOpen(false)
-      setNotifTitle('')
-      setNotifMessage('')
-      setNotifType('info')
-      alert('Notificacion enviada correctamente')
+      setSubmitting(false)
+      return
     }
 
+    // Also save to notification_history
+    await supabase
+      .from('notification_history')
+      .insert({
+        sent_by: user?.id,
+        recipient_id: clientId,
+        title: notifTitle,
+        message: notifMessage,
+        notification_type: notifType,
+        is_global: false,
+      })
+
+    setNotificationDialogOpen(false)
+    setNotifTitle('')
+    setNotifMessage('')
+    setNotifType('info')
+    alert('Notificacion enviada correctamente')
     setSubmitting(false)
   }
 
