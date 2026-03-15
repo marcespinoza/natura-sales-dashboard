@@ -136,107 +136,6 @@ export default function ProductsPage() {
     mutate()
   }
 
-  const ProductForm = () => (
-    <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="name">Nombre del Producto *</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="ej., Aceite Esencial - Lavanda"
-          />
-        </div>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="product_line">Línea del Producto</Label>
-          <Input
-            id="product_line"
-            value={productLine}
-            onChange={(e) => setProductLine(e.target.value)}
-            placeholder="ej., Esenciales, Skincare, Capilar"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="size_ml">Tamaño (ml)</Label>
-          <Input
-            id="size_ml"
-            type="number"
-            min="0"
-            value={sizeMl}
-            onChange={(e) => setSizeMl(e.target.value)}
-            placeholder="ej., 30"
-          />
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="image_url">URL de Imagen</Label>
-        <Input
-          id="image_url"
-          type="url"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          placeholder="https://ejemplo.com/imagen.jpg"
-        />
-        {imageUrl && (
-          <div className="mt-2 relative w-full h-40 rounded-lg overflow-hidden border">
-            <img 
-              src={imageUrl} 
-              alt={name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E'
-              }}
-            />
-          </div>
-        )}
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="price">Precio *</Label>
-          <Input
-            id="price"
-            type="number"
-            step="0.01"
-            min="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder="0.00"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="category">Categoría</Label>
-          <Input
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            placeholder="ej., Aceites Esenciales"
-          />
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="description">Descripción</Label>
-        <Textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Descripción del producto..."
-          rows={3}
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <Switch
-          id="is_active"
-          checked={isActive}
-          onCheckedChange={setIsActive}
-        />
-        <Label htmlFor="is_active">Activo (visible en lista de productos)</Label>
-      </div>
-    </div>
-  )
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -379,7 +278,102 @@ export default function ProductsPage() {
                               Actualiza la información del producto
                             </DialogDescription>
                           </DialogHeader>
-                          <ProductForm />
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nombre del Producto *</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="ej., Aceite Esencial - Lavanda"
+                />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="product_line">Línea del Producto</Label>
+                  <Input
+                    id="product_line"
+                    value={productLine}
+                    onChange={(e) => setProductLine(e.target.value)}
+                    placeholder="ej., Esenciales, Skincare, Capilar"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="size_ml">Tamaño (ml)</Label>
+                  <Input
+                    id="size_ml"
+                    type="number"
+                    min="0"
+                    value={sizeMl}
+                    onChange={(e) => setSizeMl(e.target.value)}
+                    placeholder="ej., 30"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="image_url">URL de Imagen</Label>
+                <Input
+                  id="image_url"
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                />
+                {imageUrl && (
+                  <div className="mt-2 relative w-full h-40 rounded-lg overflow-hidden border">
+                    <img 
+                      src={imageUrl} 
+                      alt={name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E'
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Precio *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Categoría</Label>
+                  <Input
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="ej., Aceites Esenciales"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Descripción del producto..."
+                  rows={3}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="is_active"
+                  checked={isActive}
+                  onCheckedChange={setIsActive}
+                />
+                <Label htmlFor="is_active">Activo (visible en lista de productos)</Label>
+              </div>
+            </div>
                           <DialogFooter>
                             <Button variant="outline" onClick={() => setEditingProduct(null)}>
                               Cancelar
