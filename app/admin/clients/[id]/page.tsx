@@ -126,6 +126,7 @@ export default function ClientDetailPage() {
   }
 
   async function loadClientData() {
+    console.log('[v0] Loading client data for:', clientId)
     const supabase = createClient()
 
     // Get client profile
@@ -172,6 +173,8 @@ export default function ClientDetailPage() {
     const totalPaid = purchasesData?.reduce((sum, p) => {
       return sum + (p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount || 0), 0) || 0)
     }, 0) || 0
+
+    console.log('[v0] Stats:', { totalSpent, totalPaid, totalDue: totalSpent - totalPaid, purchasesCount: purchasesData?.length, purchasesData: purchasesData?.slice(0, 2) })
 
     setStats({
       totalSpent,
@@ -249,8 +252,10 @@ export default function ClientDetailPage() {
   }
 
   async function handleRegisterPayment(e: React.FormEvent) {
+    console.log('[v0] handleRegisterPayment called')
     e.preventDefault()
     if (!selectedPurchase) {
+      console.log('[v0] No selected purchase')
       toast({
         title: 'Error',
         description: 'Selecciona una compra primero',
@@ -263,6 +268,8 @@ export default function ClientDetailPage() {
     const alreadyPaid = selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount || 0), 0) || 0
     const totalDue = selectedPurchase.total_amount || 0
 
+    console.log('[v0] Payment validation:', { amount, alreadyPaid, totalDue })
+
     if (amount <= 0) {
       toast({
         title: 'Error',
@@ -274,6 +281,7 @@ export default function ClientDetailPage() {
 
     if (alreadyPaid + amount > totalDue) {
       const maxAllowed = Math.max(0, totalDue - alreadyPaid)
+      console.log('[v0] Payment EXCEEDS TOTAL - showing toast:', { alreadyPaid, amount, totalDue, maxAllowed })
       toast({
         title: 'Monto Inválido',
         description: `El pago no puede superar el total de la compra. Total: $${totalDue.toFixed(2)}, Ya pagado: $${alreadyPaid.toFixed(2)}, Máximo a pagar ahora: $${maxAllowed.toFixed(2)}`,
@@ -810,7 +818,10 @@ export default function ClientDetailPage() {
                                       <Button type="button" variant="outline" onClick={() => setPaymentDialogOpen(false)}>
                                         Cancelar
                                       </Button>
-                                      <Button type="submit" disabled={submitting}>
+                                      <Button 
+                                        type="submit" 
+                                        disabled={submitting}
+                                      >
                                         {submitting ? 'Registrando...' : 'Registrar Pago'}
                                       </Button>
                                     </DialogFooter>
