@@ -86,37 +86,11 @@ export default function NewNotificationPage() {
       return
     }
 
-    // Also send push notification
-    try {
-      const pushResponse = await fetch('/api/push/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          message,
-          userId: recipientType === 'individual' ? userId : undefined,
-        }),
-      })
-
-      const pushResult = await pushResponse.json()
-      
-      if (pushResult.sent > 0) {
-        toast.success(
-          recipientType === 'all'
-            ? `Notificación enviada a todos los clientes (${pushResult.sent} push)`
-            : `Notificación enviada correctamente (${pushResult.sent} push)`
-        )
-      } else {
-        toast.success(
-          recipientType === 'all'
-            ? 'Notificación enviada a todos los clientes'
-            : 'Notificación enviada correctamente'
-        )
-      }
-    } catch (pushError) {
-      console.error('[v0] Push notification error:', pushError)
-      toast.success('Notificación guardada (push no disponible)')
-    }
+    toast.success(
+      recipientType === 'all'
+        ? 'Notificación enviada a todos los clientes'
+        : 'Notificación enviada correctamente'
+    )
 
     router.push('/admin/notifications')
   }
