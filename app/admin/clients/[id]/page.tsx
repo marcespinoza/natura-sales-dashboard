@@ -47,9 +47,8 @@ interface Purchase {
   product_id: string
   quantity: number
   unit_price: number
-  total_price: number
+  total_amount: number
   points_earned: number
-  notes: string | null
   created_at: string
   product: { name: string } | null
   payments: { id: string; amount: number; payment_method: string; notes: string | null; created_at: string }[]
@@ -194,11 +193,10 @@ export default function ClientDetailPage() {
       .insert({
         client_id: clientId,
         product_id: selectedProduct,
-        quantity,
-        unit_price: product.price,
-        total_price: totalPrice,
+        quantity: parseInt(purchaseQuantity),
+        unit_price: productPrice,
+        total_amount: productPrice * parseInt(purchaseQuantity),
         points_earned: pointsEarned,
-        notes: purchaseNotes || null,
       })
 
     if (error) {
@@ -258,10 +256,10 @@ export default function ClientDetailPage() {
     const { error } = await supabase
       .from('notifications')
       .insert({
-        user_id: clientId,
+        recipient_id: clientId,
         title: notifTitle,
         message: notifMessage,
-        type: notifType,
+        is_global: false,
       })
 
     if (error) {

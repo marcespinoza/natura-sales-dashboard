@@ -51,12 +51,23 @@ export function NotificationBell({ userId, initialUnreadCount }: NotificationBel
   const unreadCount = notifications?.filter((n) => !n.is_read).length ?? initialUnreadCount
 
   async function markAsRead(notificationId: string) {
-    await supabase
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('id', notificationId)
-    
-    mutate()
+    try {
+      console.log('[v0] Marking notification as read:', notificationId)
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', notificationId)
+      
+      if (error) {
+        console.error('[v0] Error marking as read:', error)
+        return
+      }
+      
+      console.log('[v0] Notification marked as read successfully')
+      await mutate()
+    } catch (err) {
+      console.error('[v0] Exception:', err)
+    }
   }
 
   async function markAllAsRead() {
