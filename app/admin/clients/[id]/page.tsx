@@ -162,9 +162,9 @@ export default function ClientDetailPage() {
     setPayments(paymentsData || [])
 
     // Calculate stats
-    const totalSpent = purchasesData?.reduce((sum, p) => sum + Number(p.total_amount), 0) || 0
+    const totalSpent = purchasesData?.reduce((sum, p) => sum + Number(p.total_amount || 0), 0) || 0
     const totalPaid = purchasesData?.reduce((sum, p) => {
-      return sum + (p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount), 0) || 0)
+      return sum + (p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount || 0), 0) || 0)
     }, 0) || 0
 
     setStats({
@@ -244,10 +244,17 @@ export default function ClientDetailPage() {
 
   async function handleRegisterPayment(e: React.FormEvent) {
     e.preventDefault()
-    if (!selectedPurchase) return
+    if (!selectedPurchase) {
+      toast({
+        title: 'Error',
+        description: 'Selecciona una compra primero',
+        variant: 'destructive',
+      })
+      return
+    }
 
     const amount = parseFloat(paymentAmount || '0')
-    const alreadyPaid = selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0
+    const alreadyPaid = selectedPurchase.payments?.reduce((s, p) => s + Number(p.amount || 0), 0) || 0
     const totalDue = selectedPurchase.total_amount || 0
 
     if (amount <= 0) {
@@ -260,47 +267,97 @@ export default function ClientDetailPage() {
     }
 
     if (alreadyPaid + amount > totalDue) {
+      const maxAllowed = Math.max(0, totalDue - alreadyPaid)
       toast({
         title: 'Monto Inválido',
-        description: `El pago no puede superar el total de la compra. Total: $${totalDue.toFixed(2)}, Ya pagado: $${alreadyPaid.toFixed(2)}, Máximo a pagar ahora: $${(totalDue - alreadyPaid).toFixed(2)}`,
+        description: `El pago no puede superar el total de la compra. Total: $${totalDue.toFixed(2)}, Ya pagado: $${alreadyPaid.toFixed(2)}, Máximo a pagar ahora: $${maxAllowed.toFixed(2)}`,
         variant: 'destructive',
       })
       return
     }
 
     setSubmitting(true)
-    const supabase = createClient()
+    try {
+      const supabase = createClient()
 
-    const { error } = await supabase
-      .from('payments')
-      .insert({
-        purchase_id: selectedPurchase.id,
-        amount: amount,
-        payment_method: paymentMethod,
-        notes: paymentNotes || null,
-      })
+      const { error } = await supabase
+        .from('payments')
+        .insert({
+          purchase_id: selectedPurchase.id,
+          amount: amount,
+          payment_method: paymentMethod,
+          notes: paymentNotes || null,
+        })
 
-    if (error) {
-      console.error('[v0] Payment error:', error)
+      if (error) {
+        console.error('[v0] Payment error:', error)
+        toast({
+          title: 'Error',
+          description: 'Error al registrar pago: ' + error.message,
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Éxito',
+          description: 'Pago registrado correctamente',
+        })
+        setPaymentDialogOpen(false)
+        setPaymentAmount('')
+        setPaymentMethod('cash')
+        setPaymentNotes('')
+        setSelectedPurchase(null)
+        await loadClientData()
+      }
+    } catch (err) {
+      console.error('[v0] Exception:', err)
       toast({
         title: 'Error',
-        description: 'Error al registrar pago: ' + error.message,
+        description: 'Error inesperado: ' + (err instanceof Error ? err.message : String(err)),
         variant: 'destructive',
       })
-    } else {
-      toast({
-        title: 'Éxito',
-        description: 'Pago registrado correctamente',
-      })
-      setPaymentDialogOpen(false)
-      setPaymentAmount('')
-      setPaymentMethod('cash')
-      setPaymentNotes('')
-      setSelectedPurchase(null)
-      await loadClientData()
+    } finally {
+      setSubmitting(false)
     }
+  }
 
-    setSubmitting(false)
+  async function handleDeletePurchase() {
+    if (!purchaseToDelete) return
+
+    setIsDeleting(true)
+    try {
+      const supabase = createClient()
+
+      const { error } = await supabase
+        .from('purchases')
+        .delete()
+        .eq('id', purchaseToDelete.id)
+
+      if (error) {
+        console.error('[v0] Delete error:', error)
+        toast({
+          title: 'Error',
+          description: 'Error al eliminar compra: ' + error.message,
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Éxito',
+          description: 'Compra eliminada correctamente',
+        })
+        setDeleteDialogOpen(false)
+        setPurchaseToDelete(null)
+        await loadClientData()
+      }
+    } catch (err) {
+      console.error('[v0] Exception:', err)
+      toast({
+        title: 'Error',
+        description: 'Error inesperado: ' + (err instanceof Error ? err.message : String(err)),
+        variant: 'destructive',
+      })
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   async function handleSendNotification(e: React.FormEvent) {
@@ -653,7 +710,7 @@ export default function ClientDetailPage() {
                           </TableCell>
                           <TableCell className="text-center">{purchase.quantity}</TableCell>
                           <TableCell className="text-right font-medium">
-                            {formatCurrency(purchase.total_price)}
+                            {formatCurrency(purchase.total_amount)}
                           </TableCell>
                           <TableCell className="text-right text-status-paid">
                             {formatCurrency(paid)}
@@ -665,21 +722,22 @@ export default function ClientDetailPage() {
                             <PaymentStatusBadge status={status} />
                           </TableCell>
                           <TableCell>
-                            {status !== 'paid' && (
-                              <Dialog open={paymentDialogOpen && selectedPurchase?.id === purchase.id} onOpenChange={(open) => {
-                                setPaymentDialogOpen(open)
-                                if (open) {
-                                  setSelectedPurchase(purchase)
-                                  setPaymentAmount(amountDue.toString())
-                                }
-                              }}>
-                                <DialogTrigger asChild>
-                                  <Button size="sm" variant="outline">
-                                    <Plus className="h-4 w-4 mr-1" />
-                                    Pago
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
+                            <div className="flex gap-2">
+                              {status !== 'paid' && (
+                                <Dialog open={paymentDialogOpen && selectedPurchase?.id === purchase.id} onOpenChange={(open) => {
+                                  setPaymentDialogOpen(open)
+                                  if (open) {
+                                    setSelectedPurchase(purchase)
+                                    setPaymentAmount(amountDue.toString())
+                                  }
+                                }}>
+                                  <DialogTrigger asChild>
+                                    <Button size="sm" variant="outline">
+                                      <Plus className="h-4 w-4 mr-1" />
+                                      Pago
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent>
                                   <form onSubmit={handleRegisterPayment}>
                                     <DialogHeader>
                                       <DialogTitle>Registrar Pago</DialogTitle>
@@ -753,7 +811,40 @@ export default function ClientDetailPage() {
                                   </form>
                                 </DialogContent>
                               </Dialog>
-                            )}
+                              )}
+                              <Dialog open={deleteDialogOpen && purchaseToDelete?.id === purchase.id} onOpenChange={(open) => {
+                                setDeleteDialogOpen(open)
+                                if (open) {
+                                  setPurchaseToDelete(purchase)
+                                }
+                              }}>
+                                <DialogTrigger asChild>
+                                  <Button size="sm" variant="destructive">
+                                    Eliminar
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Eliminar Compra</DialogTitle>
+                                    <DialogDescription>
+                                      ¿Está seguro de que desea eliminar esta compra? Esta acción no se puede deshacer.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="py-4">
+                                    <p className="text-sm"><span className="font-medium">Producto:</span> {purchase.product?.name}</p>
+                                    <p className="text-sm"><span className="font-medium">Monto:</span> {formatCurrency(purchase.total_amount)}</p>
+                                  </div>
+                                  <DialogFooter>
+                                    <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                                      Cancelar
+                                    </Button>
+                                    <Button type="button" variant="destructive" onClick={handleDeletePurchase} disabled={isDeleting}>
+                                      {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
                           </TableCell>
                         </TableRow>
                       )
