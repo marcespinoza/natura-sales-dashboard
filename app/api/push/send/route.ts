@@ -5,10 +5,13 @@ import webpush from 'web-push'
 // Configure web-push with VAPID keys
 const vapidPublicKey = process.env.VAPID_PUBLIC_KEY
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
-const vapidEmail = process.env.VAPID_EMAIL || 'mailto:admin@example.com'
+const vapidEmail = process.env.VAPID_EMAIL || 'admin@example.com'
+
+// Format email as mailto: if not already
+const vapidSubject = vapidEmail.startsWith('mailto:') ? vapidEmail : `mailto:${vapidEmail}`
 
 if (vapidPublicKey && vapidPrivateKey) {
-  webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey)
+  webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey)
 }
 
 export async function POST(request: Request) {

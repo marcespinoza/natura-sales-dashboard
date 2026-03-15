@@ -1,5 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import webpush from 'web-push'
+
+// Configure web-push with VAPID keys
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+const vapidEmail = process.env.VAPID_EMAIL || 'admin@example.com'
+
+// Format email as mailto: if not already
+const vapidSubject = vapidEmail.startsWith('mailto:') ? vapidEmail : `mailto:${vapidEmail}`
+
+if (vapidPublicKey && vapidPrivateKey) {
+  webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey)
+}
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
@@ -26,7 +39,7 @@ export async function POST(request: NextRequest) {
     const { error: notificationError } = await supabase
       .from('notifications')
       .insert({
-        title: '📢 Notificación de Prueba',
+        title: 'Notificación de Prueba',
         message: 'Esta es una notificación de prueba para verificar que el sistema funciona correctamente.',
         is_global: true,
         is_read: false,
@@ -43,32 +56,41 @@ export async function POST(request: NextRequest) {
       .select('*')
 
     let sent = 0
+    let failed = 0
     
     if (subscriptions && subscriptions.length > 0) {
       for (const subscription of subscriptions) {
         try {
-          const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `key=${process.env.FCM_SERVER_KEY}`,
+          const pushSubscription = {
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: subscription.p256dh,
+              auth: subscription.auth,
             },
-            body: JSON.stringify({
-              to: subscription.endpoint,
-              notification: {
-                title: '📢 Notificación de Prueba',
-                body: 'Esta es una notificación de prueba para verificar que el sistema funciona.',
-                icon: '/icon-192x192.png',
-                badge: '/icon-192x192.png',
-              },
-            }),
-          })
-
-          if (response.ok) {
-            sent++
           }
+
+          await webpush.sendNotification(
+            pushSubscription,
+            JSON.stringify({
+              title: 'Notificación de Prueba',
+              body: 'Esta es una notificación de prueba para verificar que el sistema funciona.',
+              icon: '/icon-192x192.png',
+              badge: '/icon-192x192.png',
+              tag: 'test-notification',
+            })
+          )
+          sent++
         } catch (error) {
           console.error('[v0] Error sending push:', error)
+          failed++
+          
+          // If subscription is invalid, delete it
+          if (error instanceof webpush.WebPushError && error.statusCode === 410) {
+            await supabase
+              .from('push_subscriptions')
+              .delete()
+              .eq('id', subscription.id)
+          }
         }
       }
     }
@@ -76,7 +98,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true,
       message: 'Notificación de prueba enviada',
-      sent 
+      sent,
+      failed,
+      total: subscriptions?.length || 0
     })
   } catch (error) {
     console.error('[v0] Error:', error)
