@@ -115,7 +115,8 @@ export default function ProductsPage() {
         .eq('id', editingProduct.id)
 
       if (error) {
-        toast.error('Error al actualizar producto')
+        console.error('[v0] Update error:', error)
+        toast.error(`Error al actualizar: ${error.message}`)
       } else {
         toast.success('Producto actualizado')
         setEditingProduct(null)
@@ -126,7 +127,8 @@ export default function ProductsPage() {
         .insert(productData)
 
       if (error) {
-        toast.error('Error al agregar producto')
+        console.error('[v0] Insert error:', error)
+        toast.error(`Error al agregar: ${error.message}`)
       } else {
         toast.success('Producto agregado')
         setIsAddOpen(false)

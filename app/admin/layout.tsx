@@ -37,9 +37,9 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-background">
       <AdminHeader user={user} profile={profile} />
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         <AdminNav />
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 w-full">
           {children}
         </main>
       </div>
