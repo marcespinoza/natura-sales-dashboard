@@ -36,9 +36,9 @@ export default async function DashboardPage() {
 
   // Calculate stats
   const allPurchases = purchases || []
-  const totalSpent = allPurchases.reduce((sum, p) => sum + Number(p.total_price), 0)
+  const totalSpent = allPurchases.reduce((sum, p) => sum + Number(p.total_amount || 0), 0)
   const totalPaid = allPurchases.reduce((sum, p) => {
-    const paid = p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount), 0) || 0
+    const paid = p.payments?.reduce((s: number, pay: { amount: number }) => s + Number(pay.amount || 0), 0) || 0
     return sum + paid
   }, 0)
   const totalDue = totalSpent - totalPaid
@@ -160,26 +160,26 @@ export default async function DashboardPage() {
             <div className="space-y-4">
               {allPurchases.map((purchase) => {
                 const paid = purchase.payments?.reduce((s: number, p: { amount: number }) => s + Number(p.amount), 0) || 0
-                const status = paid >= Number(purchase.total_price) ? 'paid' : paid > 0 ? 'partial' : 'pending'
+                const status = paid >= Number(purchase.total_amount || 0) ? 'paid' : paid > 0 ? 'partial' : 'pending'
                 
                 return (
                   <div
                     key={purchase.id}
-                    className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-4 last:border-0 last:pb-0 gap-3"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted shrink-0">
                         <ShoppingBag className="h-5 w-5 text-muted-foreground" />
                       </div>
-                      <div>
-                        <p className="font-medium">{purchase.product?.name}</p>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{purchase.product?.name}</p>
+                        <p className="text-sm text-muted-foreground whitespace-nowrap">
                           {formatDate(purchase.created_at)} · Cant: {purchase.quantity}
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-medium">{formatCurrency(purchase.total_price)}</p>
+                    <div className="text-right sm:shrink-0">
+                      <p className="font-medium">{formatCurrency(purchase.total_amount)}</p>
                       <PaymentStatusBadge status={status} />
                     </div>
                   </div>
