@@ -94,17 +94,32 @@ export function usePushNotifications() {
       const subscriptionJson = subscription.toJSON()
       
       console.log('[v0] Saving subscription to database...')
-      const { error } = await supabase
-        .from('push_subscriptions')
-        .upsert({
-          user_id: user.id,
-          endpoint: subscription.endpoint,
-          p256dh: subscriptionJson.keys?.p256dh || '',
-          auth: subscriptionJson.keys?.auth || '',
-        })
-
-      if (error) {
-        console.error('[v0] Error saving subscription:', error)
+      
+      try {
+        // First delete any existing subscription for this endpoint
+        await supabase
+          .from('push_subscriptions')
+          .delete()
+          .eq('endpoint', subscription.endpoint)
+        
+        console.log('[v0] Existing subscription deleted (if any)')
+        
+        // Then insert the new one
+        const { error: insertError } = await supabase
+          .from('push_subscriptions')
+          .insert({
+            user_id: user.id,
+            endpoint: subscription.endpoint,
+            p256dh: subscriptionJson.keys?.p256dh || '',
+            auth: subscriptionJson.keys?.auth || '',
+          })
+        
+        if (insertError) {
+          console.error('[v0] Error inserting subscription:', insertError)
+          return false
+        }
+      } catch (dbError) {
+        console.error('[v0] Database error:', dbError)
         return false
       }
 
