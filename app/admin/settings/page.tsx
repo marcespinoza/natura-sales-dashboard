@@ -48,6 +48,8 @@ export default function AdminSettingsPage() {
 
   // Settings
   const [pointsPercentage, setPointsPercentage] = useState(10)
+  const [pointsExpirationDays, setPointsExpirationDays] = useState(365)
+  const [pointsRedemptionEnabled, setPointsRedemptionEnabled] = useState(true)
   const [isSavingSettings, setIsSavingSettings] = useState(false)
 
   // Admin management
@@ -99,6 +101,8 @@ export default function AdminSettingsPage() {
 
       if (settingsData) {
         setPointsPercentage(settingsData.points_percentage || 10)
+        setPointsExpirationDays(settingsData.points_expiration_days || 365)
+        setPointsRedemptionEnabled(settingsData.points_redemption_enabled !== false)
       }
       
       setIsLoading(false)
@@ -113,6 +117,11 @@ export default function AdminSettingsPage() {
       return
     }
 
+    if (pointsExpirationDays < 1 || pointsExpirationDays > 3650) {
+      toast.error('Los días de expiración deben estar entre 1 y 3650')
+      return
+    }
+
     setIsSavingSettings(true)
 
     const { error } = await supabase
@@ -120,6 +129,8 @@ export default function AdminSettingsPage() {
       .upsert({
         id: 1,
         points_percentage: pointsPercentage,
+        points_expiration_days: pointsExpirationDays,
+        points_redemption_enabled: pointsRedemptionEnabled,
         updated_at: new Date().toISOString(),
       })
 
@@ -360,7 +371,7 @@ export default function AdminSettingsPage() {
             Configura el porcentaje de puntos a otorgar por cada compra
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="points">Porcentaje de Puntos (%)</Label>
             <div className="flex gap-4 items-end">
@@ -378,15 +389,50 @@ export default function AdminSettingsPage() {
                   Ejemplo: En una compra de $100, se darán {(100 * pointsPercentage / 100).toFixed(0)} puntos
                 </p>
               </div>
-              <Button 
-                onClick={handleSaveSettings} 
-                disabled={isSavingSettings}
-              >
-                {isSavingSettings ? <Spinner className="mr-2 h-4 w-4" /> : null}
-                Guardar
-              </Button>
             </div>
           </div>
+
+          <div className="border-t pt-6 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="expiration">Días de Expiración de Puntos</Label>
+              <Input
+                id="expiration"
+                type="number"
+                min="1"
+                max="3650"
+                value={pointsExpirationDays}
+                onChange={(e) => setPointsExpirationDays(parseInt(e.target.value) || 365)}
+              />
+              <p className="text-sm text-muted-foreground">
+                Los puntos expirarán después de {pointsExpirationDays} días ({(pointsExpirationDays / 365).toFixed(1)} años)
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="redemption" className="text-base">Habilitar Canje de Puntos</Label>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Permite que los clientes canjeen sus puntos por descuentos
+                </p>
+              </div>
+              <input
+                id="redemption"
+                type="checkbox"
+                checked={pointsRedemptionEnabled}
+                onChange={(e) => setPointsRedemptionEnabled(e.target.checked)}
+                className="h-5 w-5"
+              />
+            </div>
+          </div>
+
+          <Button 
+            onClick={handleSaveSettings} 
+            disabled={isSavingSettings}
+            className="w-full"
+          >
+            {isSavingSettings ? <Spinner className="mr-2 h-4 w-4" /> : null}
+            Guardar Configuración
+          </Button>
         </CardContent>
       </Card>
 

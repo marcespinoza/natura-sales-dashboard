@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Award, TrendingUp, TrendingDown, Gift } from 'lucide-react'
+import { Award, TrendingUp, TrendingDown, Gift, AlertCircle, ShoppingCart } from 'lucide-react'
 import { formatDate, formatNumber } from '@/lib/format'
+import { Button } from '@/components/ui/button'
 
 export default async function PointsPage() {
   const supabase = await createClient()
@@ -14,11 +15,17 @@ export default async function PointsPage() {
     redirect('/auth/login')
   }
 
-  // Get user profile
+  // Get user profile with points
   const { data: profile } = await supabase
     .from('profiles')
-    .select('points_balance')
+    .select('points_balance, created_at')
     .eq('id', user.id)
+    .single()
+
+  // Get settings for expiration
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('points_expiration_days, points_redemption_enabled')
     .single()
 
   // Get points history
@@ -75,19 +82,37 @@ export default async function PointsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Canjeado</CardTitle>
-            <Gift className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-medium">Vencimiento</CardTitle>
+            <AlertCircle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(totalRedeemed)}
+            <div className="text-sm font-medium">
+              {settings?.points_expiration_days ? `${settings.points_expiration_days} días` : 'No configurado'}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Puntos usados en recompensas
+              Tiempo antes de que vencen los puntos
             </p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Redemption Banner */}
+      {settings?.points_redemption_enabled && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="pt-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <ShoppingCart className="h-5 w-5 text-primary" />
+              <div>
+                <p className="font-medium">¡Canjea tus Puntos!</p>
+                <p className="text-sm text-muted-foreground">Usa tus puntos para obtener descuentos en tu próxima compra</p>
+              </div>
+            </div>
+            <Button size="sm">
+              Canjear Puntos
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Points History */}
       <Card>

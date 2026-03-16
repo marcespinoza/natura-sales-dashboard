@@ -92,6 +92,12 @@ export default function ClientDetailPage() {
   const [purchaseToDelete, setPurchaseToDelete] = useState<Purchase | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Adjust points
+  const [adjustPointsDialogOpen, setAdjustPointsDialogOpen] = useState(false)
+  const [pointsAdjustment, setPointsAdjustment] = useState(0)
+  const [adjustmentReason, setAdjustmentReason] = useState('')
+  const [isAdjustingPoints, setIsAdjustingPoints] = useState(false)
+
   // Payment form
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('cash')
@@ -375,6 +381,54 @@ export default function ClientDetailPage() {
       })
     } finally {
       setIsDeleting(false)
+    }
+  }
+
+  async function handleAdjustPoints() {
+    if (!client) return
+    if (pointsAdjustment === 0) {
+      toast({
+        title: 'Error',
+        description: 'El ajuste de puntos debe ser diferente a 0',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsAdjustingPoints(true)
+    try {
+      const supabase = createClient()
+      const newBalance = Math.max(0, (client.points_balance || 0) + pointsAdjustment)
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ points_balance: newBalance })
+        .eq('id', clientId)
+
+      if (error) {
+        toast({
+          title: 'Error',
+          description: 'Error al ajustar puntos: ' + error.message,
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Éxito',
+          description: `Puntos ajustados correctamente (${pointsAdjustment > 0 ? '+' : ''}${pointsAdjustment})`,
+        })
+        setAdjustPointsDialogOpen(false)
+        setPointsAdjustment(0)
+        setAdjustmentReason('')
+        await loadClientData()
+      }
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'Error inesperado: ' + (err instanceof Error ? err.message : String(err)),
+        variant: 'destructive',
+      })
+    } finally {
+      setIsAdjustingPoints(false)
     }
   }
 
@@ -664,14 +718,65 @@ export default function ClientDetailPage() {
                 <span className="text-sm text-muted-foreground">Pagos realizados:</span>
                 <span className="font-medium">{payments.length}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Puntos acumulados:</span>
                 <span className="font-medium">{client.points_balance}</span>
               </div>
             </div>
+            <Button 
+              onClick={() => setAdjustPointsDialogOpen(true)}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Ajustar Puntos
+            </Button>
           </CardContent>
         </Card>
       </div>
+
+      {/* Adjust Points Dialog */}
+      <Dialog open={adjustPointsDialogOpen} onOpenChange={setAdjustPointsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajustar Puntos del Cliente</DialogTitle>
+            <DialogDescription>
+              Puntos actuales: {client?.points_balance || 0}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="adjustment">Cantidad de Puntos</Label>
+              <Input
+                id="adjustment"
+                type="number"
+                placeholder="Ej: +100 o -50"
+                value={pointsAdjustment}
+                onChange={(e) => setPointsAdjustment(parseInt(e.target.value) || 0)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Los puntos nuevos serán: {Math.max(0, (client?.points_balance || 0) + pointsAdjustment)}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reason">Razón del Ajuste (opcional)</Label>
+              <Input
+                id="reason"
+                placeholder="Ej: Compensación por error"
+                value={adjustmentReason}
+                onChange={(e) => setAdjustmentReason(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setAdjustPointsDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="button" onClick={handleAdjustPoints} disabled={isAdjustingPoints}>
+              {isAdjustingPoints ? 'Ajustando...' : 'Confirmar Ajuste'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Tabs for Purchases and Payments */}
       <Tabs defaultValue="purchases" className="space-y-4">
