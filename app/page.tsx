@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ShoppingBag, CreditCard, Award, ArrowRight } from 'lucide-react'
+import { Leaf, ShoppingBag, CreditCard, Award, ArrowRight } from 'lucide-react'
+import { Span } from 'next/dist/trace'
 
 export default function HomePage() {
   return (
@@ -10,14 +10,10 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cropped-Logo-Natura-Biobelleza-2024-Oficial-dB54NmgfKX3QjQp0Ag8JUrAzTGOnJU.png"
-              alt="Natura"
-              width={40}
-              height={40}
-              className="object-contain"
-            />
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
+              <Leaf className="h-5 w-5 text-primary-foreground" />
+            </div>
             <span className="text-xl font-bold">Natura</span>
           </div>
           <div className="flex items-center gap-3">
@@ -36,9 +32,8 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-20 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-              Tu Portal Personal de{' '}
-              <span className="text-primary">Natura</span>{' '}
-              Consultora
+              Tu espacio de consultoría{' '}
+              <span className="text-primary">con Wilma</span>{' '}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
               Controla tus compras, administra pagos y gana puntos de lealtad. 
@@ -172,7 +167,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Portal de Consultora Natura. Hecho con cariño.</p>
+          <p>Portal de la Consultora Natura Wilma Riquelme. Hecho con cariño.</p>
         </div>
       </footer>
     </div>
