@@ -53,7 +53,7 @@ export function AdminHeader({ user, profile }: AdminHeaderProps) {
           <Link href="/admin" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary p-0.5">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-JvkVTmzFKdmvtmjoe4OE4K41kFAIqx.png"
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-1b0Z5JQd2eiRxLKYWp2qmwdjmeTki5.png"
                 alt="Natura"
                 width={32}
                 height={32}
