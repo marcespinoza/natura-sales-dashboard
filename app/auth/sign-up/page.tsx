@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,7 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Spinner } from '@/components/ui/spinner'
 import { createClient } from '@/lib/supabase/client'
-import { Leaf, AlertCircle } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -117,8 +118,14 @@ export default function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-            <Leaf className="h-6 w-6 text-primary-foreground" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary p-1">
+            <Image
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-5fL1cBNIljBW3HNggQLzzJD8aYuTpb.png"
+              alt="Natura"
+              width={28}
+              height={28}
+              className="object-contain"
+            />
           </div>
           <CardTitle className="text-2xl font-bold text-balance">Crea tu cuenta</CardTitle>
           <CardDescription className="text-pretty">

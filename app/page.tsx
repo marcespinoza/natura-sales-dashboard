@@ -1,7 +1,8 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Leaf, ShoppingBag, CreditCard, Award, ArrowRight } from 'lucide-react'
+import { ShoppingBag, CreditCard, Award, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -10,8 +11,14 @@ export default function HomePage() {
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <Leaf className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary p-0.5">
+              <Image
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-5fL1cBNIljBW3HNggQLzzJD8aYuTpb.png"
+                alt="Natura"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
             </div>
             <span className="text-xl font-bold">Natura</span>
           </div>
