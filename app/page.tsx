@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Leaf, ShoppingBag, CreditCard, Award, ArrowRight } from 'lucide-react'
+import { Span } from 'next/dist/trace'
 
 export default function HomePage() {
   return (
@@ -31,9 +32,8 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-20 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-              Tu Portal Personal de{' '}
-              <span className="text-primary">Natura</span>{' '}
-              Consultora
+              Tu espacio de consultoría{' '}
+              <span className="text-primary">con Wilma</span>{' '}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
               Controla tus compras, administra pagos y gana puntos de lealtad. 
