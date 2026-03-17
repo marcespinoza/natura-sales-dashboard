@@ -52,15 +52,13 @@ export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderP
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-4">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary p-0.5">
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-c4TwI6gA3nyfrVJhIwQBOVeCE3unMr.png"
-                alt="Natura"
-                width={32}
-                height={32}
-                className="object-contain invert"
-              />
-            </div>
+            <Image
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cropped-Logo-Natura-Biobelleza-2024-Oficial-dB54NmgfKX3QjQp0Ag8JUrAzTGOnJU.png"
+              alt="Natura"
+              width={36}
+              height={36}
+              className="object-contain"
+            />
             <span className="text-lg font-semibold hidden sm:inline-block">Natura</span>
           </Link>
         </div>

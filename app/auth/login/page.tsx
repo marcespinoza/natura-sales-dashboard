@@ -126,13 +126,13 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary p-1">
+          <div className="mx-auto mb-4">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-c4TwI6gA3nyfrVJhIwQBOVeCE3unMr.png"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cropped-Logo-Natura-Biobelleza-2024-Oficial-dB54NmgfKX3QjQp0Ag8JUrAzTGOnJU.png"
               alt="Natura"
-              width={28}
-              height={28}
-              className="object-contain invert"
+              width={60}
+              height={60}
+              className="object-contain"
             />
           </div>
           <CardTitle className="text-2xl font-bold text-balance">Bienvenida a Natura</CardTitle>

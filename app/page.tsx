@@ -10,16 +10,14 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary p-0.5">
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-c4TwI6gA3nyfrVJhIwQBOVeCE3unMr.png"
-                alt="Natura"
-                width={32}
-                height={32}
-                className="object-contain invert"
-              />
-            </div>
+          <div className="flex items-center gap-3">
+            <Image
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cropped-Logo-Natura-Biobelleza-2024-Oficial-dB54NmgfKX3QjQp0Ag8JUrAzTGOnJU.png"
+              alt="Natura"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
             <span className="text-xl font-bold">Natura</span>
           </div>
           <div className="flex items-center gap-3">
