@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import type { Profile } from '@/lib/types'
@@ -17,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { createClient } from '@/lib/supabase/client'
-import { Leaf, LogOut, User as UserIcon, Shield } from 'lucide-react'
+import { LogOut, User as UserIcon, Shield } from 'lucide-react'
 
 interface AdminHeaderProps {
   user: User
@@ -50,8 +51,14 @@ export function AdminHeader({ user, profile }: AdminHeaderProps) {
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-4">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary">
-              <Leaf className="h-4 w-4 text-primary-foreground" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary p-0.5">
+              <Image
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-JvkVTmzFKdmvtmjoe4OE4K41kFAIqx.png"
+                alt="Natura"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
             </div>
             <span className="text-lg font-semibold hidden sm:inline-block">Natura</span>
           </Link>
