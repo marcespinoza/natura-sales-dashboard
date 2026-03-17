@@ -1,7 +1,8 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Leaf, Mail, CheckCircle } from 'lucide-react'
+import { Mail, CheckCircle } from 'lucide-react'
 
 export default function SignUpSuccessPage() {
   return (
@@ -29,8 +30,14 @@ export default function SignUpSuccessPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button asChild variant="outline" className="w-full">
-            <Link href="/auth/login">
-              <Leaf className="mr-2 h-4 w-4" />
+            <Link href="/auth/login" className="flex items-center gap-2">
+              <Image
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cropped-Logo-Natura-Biobelleza-2024-Oficial-dB54NmgfKX3QjQp0Ag8JUrAzTGOnJU.png"
+                alt="Natura"
+                width={20}
+                height={20}
+                className="object-contain"
+              />
               Volver a Iniciar Sesión
             </Link>
           </Button>
