@@ -32,11 +32,11 @@ export default function SignUpSuccessPage() {
           <Button asChild variant="outline" className="w-full">
             <Link href="/auth/login" className="flex items-center gap-2">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-5fL1cBNIljBW3HNggQLzzJD8aYuTpb.png"
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-c4TwI6gA3nyfrVJhIwQBOVeCE3unMr.png"
                 alt="Natura"
                 width={16}
                 height={16}
-                className="object-contain"
+                className="object-contain invert"
               />
               Volver a Iniciar Sesión
             </Link>

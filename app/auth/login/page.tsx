@@ -128,11 +128,11 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary p-1">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-5fL1cBNIljBW3HNggQLzzJD8aYuTpb.png"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-c4TwI6gA3nyfrVJhIwQBOVeCE3unMr.png"
               alt="Natura"
               width={28}
               height={28}
-              className="object-contain"
+              className="object-contain invert"
             />
           </div>
           <CardTitle className="text-2xl font-bold text-balance">Bienvenida a Natura</CardTitle>

@@ -53,11 +53,11 @@ export function AdminHeader({ user, profile }: AdminHeaderProps) {
           <Link href="/admin" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary p-0.5">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-1b0Z5JQd2eiRxLKYWp2qmwdjmeTki5.png"
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/icons8-naturaleza-y-compa%C3%B1%C3%ADa-100-c4TwI6gA3nyfrVJhIwQBOVeCE3unMr.png"
                 alt="Natura"
                 width={32}
                 height={32}
-                className="object-contain"
+                className="object-contain invert"
               />
             </div>
             <span className="text-lg font-semibold hidden sm:inline-block">Natura</span>
