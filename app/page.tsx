@@ -32,7 +32,7 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-20 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-              Tu espacio de consultoría {' '}
+              Tu espacio de consultoría{' '}
               <span className="text-primary">con Wilma</span>{' '}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
