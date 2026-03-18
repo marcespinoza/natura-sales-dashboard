@@ -283,10 +283,13 @@ export default function ClientDetailPage() {
           notes: paymentNotes || null,
         })
 
+      console.log('[v0] Payment insert result - error:', error, 'data:', data)
+      
       if (error) {
         console.error('[v0] Payment error:', error)
         setPaymentError('Error al registrar pago: ' + error.message)
       } else {
+        console.log('[v0] Payment successful, now calculating points...')
         // Recalculate from DB to get accurate totals
         const { data: freshPayments } = await supabase
           .from('payments')
@@ -297,34 +300,57 @@ export default function ClientDetailPage() {
         const isNowComplete = realTotalPaid >= totalDue
 
         // Award points on each payment proportionally
-        const settingsData = await supabase
+        const { data: settingsData, error: settingsError } = await supabase
           .from('settings')
           .select('points_percentage')
-          .single()
+          .limit(1)
+          .maybeSingle()
 
-        const pointsPercentage = settingsData.data?.points_percentage || 10
+        console.log('[v0] Settings data:', settingsData, 'Error:', settingsError)
+
+        const pointsPercentage = settingsData?.points_percentage || 10
         // Points for THIS payment only (avoid double-counting)
         const pointsForThisPayment = Math.floor((amount * pointsPercentage) / 100)
 
+        console.log('[v0] Points calculation:', { amount, pointsPercentage, pointsForThisPayment })
+
         if (pointsForThisPayment > 0) {
+          // Add to points_ledger for tracking
+          const { error: ledgerError } = await supabase
+            .from('points_ledger')
+            .insert({
+              client_id: clientId,
+              purchase_id: selectedPurchase.id,
+              points: pointsForThisPayment,
+              description: `Puntos por pago de ${formatCurrency(amount)}`
+            })
+
+          console.log('[v0] Points ledger insert error:', ledgerError)
+
           // Update purchase points_earned by adding new points
-          await supabase
+          const { error: purchaseError } = await supabase
             .from('purchases')
             .update({ points_earned: (selectedPurchase.points_earned || 0) + pointsForThisPayment })
             .eq('id', selectedPurchase.id)
 
+          console.log('[v0] Purchase points update error:', purchaseError)
+
           // Update client points balance
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileFetchError } = await supabase
             .from('profiles')
             .select('points_balance')
             .eq('id', clientId)
             .single()
 
+          console.log('[v0] Profile fetch:', profileData, 'Error:', profileFetchError)
+
           const newBalance = (profileData?.points_balance || 0) + pointsForThisPayment
-          await supabase
+          const { error: profileUpdateError } = await supabase
             .from('profiles')
             .update({ points_balance: newBalance })
             .eq('id', clientId)
+
+          console.log('[v0] Profile update to', newBalance, 'Error:', profileUpdateError)
         }
 
         if (isNowComplete) {
