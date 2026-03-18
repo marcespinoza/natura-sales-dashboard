@@ -287,41 +287,52 @@ export default function ClientDetailPage() {
         console.error('[v0] Payment error:', error)
         setPaymentError('Error al registrar pago: ' + error.message)
       } else {
-        // Check if payment is now complete
-        const newTotalPaid = alreadyPaid + amount
-        const isNowComplete = newTotalPaid >= totalDue
-        
-        if (isNowComplete) {
-          console.log('[v0] Payment is now complete, awarding points')
-          // Get the settings to calculate points
-          const settingsData = await supabase
-            .from('settings')
-            .select('points_percentage')
-            .single()
-          
-          const pointsPercentage = settingsData.data?.points_percentage || 10
-          const pointsEarned = Math.floor((totalDue * pointsPercentage) / 100)
-          
-          // Update the purchase with points earned
+        // Recalculate from DB to get accurate totals
+        const { data: freshPayments } = await supabase
+          .from('payments')
+          .select('amount')
+          .eq('purchase_id', selectedPurchase.id)
+
+        const realTotalPaid = (freshPayments || []).reduce((s, p) => s + Number(p.amount || 0), 0)
+        const isNowComplete = realTotalPaid >= totalDue
+
+        // Award points on each payment proportionally
+        const settingsData = await supabase
+          .from('settings')
+          .select('points_percentage')
+          .single()
+
+        const pointsPercentage = settingsData.data?.points_percentage || 10
+        // Points for THIS payment only (avoid double-counting)
+        const pointsForThisPayment = Math.floor((amount * pointsPercentage) / 100)
+
+        if (pointsForThisPayment > 0) {
+          // Update purchase points_earned by adding new points
           await supabase
             .from('purchases')
-            .update({ points_earned: pointsEarned })
+            .update({ points_earned: (selectedPurchase.points_earned || 0) + pointsForThisPayment })
             .eq('id', selectedPurchase.id)
-          
-          // Update points balance
+
+          // Update client points balance
           const { data: profileData } = await supabase
             .from('profiles')
             .select('points_balance')
             .eq('id', clientId)
             .single()
-          
-          const newBalance = (profileData?.points_balance || 0) + pointsEarned
+
+          const newBalance = (profileData?.points_balance || 0) + pointsForThisPayment
           await supabase
             .from('profiles')
             .update({ points_balance: newBalance })
             .eq('id', clientId)
-          
-          console.log('[v0] Points awarded:', pointsEarned)
+        }
+
+        if (isNowComplete) {
+          // Mark purchase status as paid if needed
+          await supabase
+            .from('purchases')
+            .update({ status: 'paid' })
+            .eq('id', selectedPurchase.id)
         }
         
         toast({
@@ -795,59 +806,45 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Historial de Compras</CardTitle>
-              <CardDescription>Todos los productos que ha comprado este cliente</CardDescription>
+              <CardDescription>Todos los productos que ha comprado este cliente, agrupados por mes</CardDescription>
             </CardHeader>
             <CardContent>
               {purchases.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Fecha</TableHead>
-                      <TableHead>Producto</TableHead>
-                      <TableHead className="text-center">Cant.</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
-                      <TableHead className="text-right">Pagado</TableHead>
-                      <TableHead className="text-right">Pendiente</TableHead>
-                      <TableHead className="text-center">Estado</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {purchases.map((purchase) => {
-                      const status = getPaymentStatus(purchase)
-                      const amountDue = getPurchaseAmountDue(purchase)
-                      const paid = purchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0
-
-                      return (
-                        <TableRow key={purchase.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
-                              {formatDate(purchase.created_at)}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <p className="font-medium">{purchase.product?.name || 'Producto'}</p>
-                            {purchase.notes && (
-                              <p className="text-xs text-muted-foreground">{purchase.notes}</p>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-center">{purchase.quantity}</TableCell>
-                          <TableCell className="text-right font-medium">
-                            {formatCurrency(purchase.total_amount)}
-                          </TableCell>
-                          <TableCell className="text-right text-status-paid">
-                            {formatCurrency(paid)}
-                          </TableCell>
-                          <TableCell className={`text-right ${amountDue > 0 ? 'text-status-pending font-medium' : ''}`}>
-                            {formatCurrency(amountDue)}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <PaymentStatusBadge status={status} />
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              {status !== 'paid' && (
+                <div className="space-y-6">
+                  {(() => {
+                    // Group purchases by month
+                    const grouped: Record<string, Purchase[]> = {}
+                    purchases.forEach((p) => {
+                      const key = new Date(p.created_at).toLocaleString('es-MX', { year: 'numeric', month: 'long' })
+                      if (!grouped[key]) grouped[key] = []
+                      grouped[key].push(p)
+                    })
+                    return Object.entries(grouped).map(([month, monthPurchases]) => (
+                      <div key={month}>
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 capitalize">{month}</h3>
+                        <div className="space-y-3">
+                          {monthPurchases.map((purchase) => {
+                            const status = getPaymentStatus(purchase)
+                            const amountDue = getPurchaseAmountDue(purchase)
+                            const paid = purchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0
+                            return (
+                              <div key={purchase.id} className="border rounded-lg overflow-hidden">
+                                {/* Purchase row */}
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 bg-muted/30">
+                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                                    <span className="text-sm text-muted-foreground whitespace-nowrap">{formatDate(purchase.created_at)}</span>
+                                    <span className="font-medium truncate">{purchase.product?.name || 'Producto'}</span>
+                                    <span className="text-sm text-muted-foreground">x{purchase.quantity}</span>
+                                  </div>
+                                  <div className="flex items-center gap-3 shrink-0">
+                                    <span className="text-sm">Total: <span className="font-medium">{formatCurrency(purchase.total_amount)}</span></span>
+                                    <span className="text-sm text-status-paid">Pagado: <span className="font-medium">{formatCurrency(paid)}</span></span>
+                                    {amountDue > 0 && <span className="text-sm text-status-pending">Pendiente: <span className="font-medium">{formatCurrency(amountDue)}</span></span>}
+                                    <PaymentStatusBadge status={status} />
+                                  </div>
+                                  <div className="flex gap-2 shrink-0">
+                                    {status !== 'paid' && (
                                 <Dialog open={paymentDialogOpen && selectedPurchase?.id === purchase.id} onOpenChange={(open) => {
                                   setPaymentDialogOpen(open)
                                   if (open) {
@@ -862,134 +859,133 @@ export default function ClientDetailPage() {
                                     </Button>
                                   </DialogTrigger>
                                   <DialogContent>
-                                  <form onSubmit={handleRegisterPayment}>
-                                    <DialogHeader>
-                                      <DialogTitle>Registrar Pago</DialogTitle>
-                                      <DialogDescription>
-                                        {purchase.product?.name} - Pendiente: {formatCurrency(amountDue)}
-                                      </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-4 py-4">
-                                      <div className="rounded-lg bg-muted p-3 space-y-2 text-sm">
-                                        <div className="flex justify-between">
-                                          <span className="text-muted-foreground">Total Compra:</span>
-                                          <span className="font-medium">{formatCurrency(purchase.total_amount)}</span>
+                                    <form onSubmit={handleRegisterPayment}>
+                                      <DialogHeader>
+                                        <DialogTitle>Registrar Pago</DialogTitle>
+                                        <DialogDescription>
+                                          {purchase.product?.name} - Pendiente: {formatCurrency(amountDue)}
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <div className="space-y-4 py-4">
+                                        <div className="rounded-lg bg-muted p-3 space-y-2 text-sm">
+                                          <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Total Compra:</span>
+                                            <span className="font-medium">{formatCurrency(purchase.total_amount)}</span>
+                                          </div>
+                                          <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Ya Pagado:</span>
+                                            <span className="font-medium">{formatCurrency(paid)}</span>
+                                          </div>
+                                          <div className="border-t pt-2 flex justify-between text-base">
+                                            <span className="font-semibold">Pendiente:</span>
+                                            <span className="font-bold text-primary">{formatCurrency(amountDue)}</span>
+                                          </div>
                                         </div>
-                                        <div className="flex justify-between">
-                                          <span className="text-muted-foreground">Ya Pagado:</span>
-                                          <span className="font-medium">{formatCurrency((purchase.payments?.reduce((s, p) => s + Number(p.amount), 0) || 0))}</span>
+                                        <div className="space-y-2">
+                                          <Label>Monto a Pagar</Label>
+                                          <Input
+                                            type="number"
+                                            step="0.01"
+                                            min="0.01"
+                                            max={amountDue}
+                                            value={paymentAmount}
+                                            onChange={(e) => setPaymentAmount(e.target.value)}
+                                            required
+                                            placeholder="0.00"
+                                          />
+                                          <p className="text-xs text-muted-foreground">Máximo: {formatCurrency(amountDue)}</p>
+                                          {paymentError && (
+                                            <p className="text-sm font-medium text-destructive bg-destructive/10 p-2 rounded">
+                                              {paymentError}
+                                            </p>
+                                          )}
                                         </div>
-                                        <div className="border-t pt-2 flex justify-between text-base">
-                                          <span className="font-semibold">Pendiente:</span>
-                                          <span className="font-bold text-primary">{formatCurrency(amountDue)}</span>
+                                        <div className="space-y-2">
+                                          <Label>Método de Pago</Label>
+                                          <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="cash">Efectivo</SelectItem>
+                                              <SelectItem value="transfer">Transferencia</SelectItem>
+                                              <SelectItem value="card">Tarjeta</SelectItem>
+                                              <SelectItem value="other">Otro</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label>Notas (opcional)</Label>
+                                          <Textarea value={paymentNotes} onChange={(e) => setPaymentNotes(e.target.value)} placeholder="Notas adicionales..." rows={2} />
                                         </div>
                                       </div>
-                                      <div className="space-y-2">
-                                        <Label>Monto a Pagar</Label>
-                                        <Input
-                                          type="number"
-                                          step="0.01"
-                                          min="0.01"
-                                          max={amountDue}
-                                          value={paymentAmount}
-                                          onChange={(e) => setPaymentAmount(e.target.value)}
-                                          required
-                                          placeholder="0.00"
-                                        />
-                                        <p className="text-xs text-muted-foreground">
-                                          Máximo: {formatCurrency(amountDue)}
-                                        </p>
-                                        {paymentError && (
-                                          <p className="text-sm font-medium text-destructive bg-destructive/10 p-2 rounded">
-                                            {paymentError}
-                                          </p>
-                                        )}
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label>Método de Pago</Label>
-                                        <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                                          <SelectTrigger>
-                                            <SelectValue />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectItem value="cash">Efectivo</SelectItem>
-                                            <SelectItem value="transfer">Transferencia</SelectItem>
-                                            <SelectItem value="card">Tarjeta</SelectItem>
-                                            <SelectItem value="other">Otro</SelectItem>
-                                          </SelectContent>
-                                        </Select>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label>Notas (opcional)</Label>
-                                        <Textarea
-                                          value={paymentNotes}
-                                          onChange={(e) => setPaymentNotes(e.target.value)}
-                                          placeholder="Notas adicionales..."
-                                          rows={2}
-                                        />
-                                      </div>
-                                    </div>
-                                    <DialogFooter>
-                                      <Button type="button" variant="outline" onClick={() => setPaymentDialogOpen(false)}>
-                                        Cancelar
-                                      </Button>
-                                      <Button 
-                                        type="submit" 
-                                        disabled={submitting}
-                                      >
-                                        {submitting ? 'Registrando...' : 'Registrar Pago'}
-                                      </Button>
-                                    </DialogFooter>
-                                  </form>
-                                </DialogContent>
-                              </Dialog>
+                                      <DialogFooter>
+                                        <Button type="button" variant="outline" onClick={() => setPaymentDialogOpen(false)}>Cancelar</Button>
+                                        <Button type="submit" disabled={submitting}>{submitting ? 'Registrando...' : 'Registrar Pago'}</Button>
+                                      </DialogFooter>
+                                    </form>
+                                  </DialogContent>
+                                </Dialog>
                               )}
                               <Dialog open={deleteDialogOpen && purchaseToDelete?.id === purchase.id} onOpenChange={(open) => {
                                 setDeleteDialogOpen(open)
-                                if (open) {
-                                  setPurchaseToDelete(purchase)
-                                }
+                                if (open) setPurchaseToDelete(purchase)
                               }}>
                                 <DialogTrigger asChild>
-                                  <Button size="sm" variant="destructive">
-                                    Eliminar
-                                  </Button>
+                                  <Button size="sm" variant="destructive">Eliminar</Button>
                                 </DialogTrigger>
                                 <DialogContent>
                                   <DialogHeader>
                                     <DialogTitle>Eliminar Compra</DialogTitle>
-                                    <DialogDescription>
-                                      ¿Está seguro de que desea eliminar esta compra? Esta acción no se puede deshacer.
-                                    </DialogDescription>
+                                    <DialogDescription>¿Está seguro de que desea eliminar esta compra? Esta acción no se puede deshacer.</DialogDescription>
                                   </DialogHeader>
                                   <div className="py-4">
                                     <p className="text-sm"><span className="font-medium">Producto:</span> {purchase.product?.name}</p>
                                     <p className="text-sm"><span className="font-medium">Monto:</span> {formatCurrency(purchase.total_amount)}</p>
                                   </div>
                                   <DialogFooter>
-                                    <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                                      Cancelar
-                                    </Button>
-                                    <Button type="button" variant="destructive" onClick={handleDeletePurchase} disabled={isDeleting}>
-                                      {isDeleting ? 'Eliminando...' : 'Eliminar'}
-                                    </Button>
+                                    <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
+                                    <Button type="button" variant="destructive" onClick={handleDeletePurchase} disabled={isDeleting}>{isDeleting ? 'Eliminando...' : 'Eliminar'}</Button>
                                   </DialogFooter>
                                 </DialogContent>
                               </Dialog>
                             </div>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
+                          </div>
+
+                                {/* Payments for this purchase */}
+                                {purchase.payments && purchase.payments.length > 0 && (
+                                  <div className="px-4 pb-3 border-t bg-background">
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mt-3 mb-2">Pagos registrados</p>
+                                    <div className="space-y-1">
+                                      {purchase.payments.map((payment) => (
+                                        <div key={payment.id} className="flex items-center justify-between text-sm py-1">
+                                          <div className="flex items-center gap-3">
+                                            <span className="text-muted-foreground">{formatDateTime(payment.created_at)}</span>
+                                            <Badge variant="outline" className="text-xs">
+                                              {payment.payment_method === 'cash' && 'Efectivo'}
+                                              {payment.payment_method === 'transfer' && 'Transferencia'}
+                                              {payment.payment_method === 'card' && 'Tarjeta'}
+                                              {payment.payment_method === 'other' && 'Otro'}
+                                            </Badge>
+                                            {payment.notes && <span className="text-muted-foreground">{payment.notes}</span>}
+                                          </div>
+                                          <span className="font-medium text-status-paid">{formatCurrency(payment.amount)}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))
+                  })()}
+                </div>
               ) : (
                 <div className="text-center py-12">
                   <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-lg font-medium">Sin compras aun</p>
-                  <p className="text-muted-foreground">
-                    Este cliente no tiene compras registradas
-                  </p>
+                  <p className="text-muted-foreground">Este cliente no tiene compras registradas</p>
                 </div>
               )}
             </CardContent>
@@ -1000,55 +996,53 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Historial de Pagos</CardTitle>
-              <CardDescription>Todos los pagos realizados por este cliente</CardDescription>
+              <CardDescription>Todos los pagos realizados por este cliente, agrupados por mes</CardDescription>
             </CardHeader>
             <CardContent>
               {payments.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Fecha y Hora</TableHead>
-                      <TableHead>Producto</TableHead>
-                      <TableHead className="text-right">Monto</TableHead>
-                      <TableHead>Metodo</TableHead>
-                      <TableHead>Notas</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {payments.map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            {formatDateTime(payment.created_at)}
-                          </div>
-                        </TableCell>
-                        <TableCell>{payment.purchase?.product?.name || 'Producto'}</TableCell>
-                        <TableCell className="text-right font-medium text-status-paid">
-                          {formatCurrency(payment.amount)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {payment.payment_method === 'cash' && 'Efectivo'}
-                            {payment.payment_method === 'transfer' && 'Transferencia'}
-                            {payment.payment_method === 'card' && 'Tarjeta'}
-                            {payment.payment_method === 'other' && 'Otro'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {payment.notes || '-'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="space-y-6">
+                  {(() => {
+                    const grouped: Record<string, Payment[]> = {}
+                    payments.forEach((p) => {
+                      const key = new Date(p.created_at).toLocaleString('es-MX', { year: 'numeric', month: 'long' })
+                      if (!grouped[key]) grouped[key] = []
+                      grouped[key].push(p)
+                    })
+                    return Object.entries(grouped).map(([month, monthPayments]) => (
+                      <div key={month}>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide capitalize">{month}</h3>
+                          <span className="text-sm font-medium text-status-paid">
+                            Total: {formatCurrency(monthPayments.reduce((s, p) => s + Number(p.amount), 0))}
+                          </span>
+                        </div>
+                        <div className="border rounded-lg divide-y">
+                          {monthPayments.map((payment) => (
+                            <div key={payment.id} className="flex items-center justify-between px-4 py-3 text-sm">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                                <span className="text-muted-foreground whitespace-nowrap">{formatDateTime(payment.created_at)}</span>
+                                <span className="font-medium truncate">{payment.purchase?.product?.name || 'Producto'}</span>
+                                <Badge variant="outline" className="text-xs shrink-0">
+                                  {payment.payment_method === 'cash' && 'Efectivo'}
+                                  {payment.payment_method === 'transfer' && 'Transferencia'}
+                                  {payment.payment_method === 'card' && 'Tarjeta'}
+                                  {payment.payment_method === 'other' && 'Otro'}
+                                </Badge>
+                              </div>
+                              <span className="font-medium text-status-paid shrink-0 ml-4">{formatCurrency(payment.amount)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  })()}
+                </div>
               ) : (
                 <div className="text-center py-12">
                   <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-lg font-medium">Sin pagos registrados</p>
-                  <p className="text-muted-foreground">
-                    Los pagos realizados apareceran aqui
-                  </p>
+                  <p className="text-muted-foreground">Los pagos realizados apareceran aqui</p>
                 </div>
               )}
             </CardContent>
