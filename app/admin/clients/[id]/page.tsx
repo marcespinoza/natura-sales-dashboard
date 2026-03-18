@@ -393,16 +393,20 @@ export default function ClientDetailPage() {
       const supabase = createClient()
 
       // First delete related points_ledger records
-      await supabase
+      const { error: ledgerError } = await supabase
         .from('points_ledger')
         .delete()
         .eq('purchase_id', purchaseToDelete.id)
+      
+      console.log('[v0] Points ledger delete error:', ledgerError)
 
       // Then delete related payments
-      await supabase
+      const { error: paymentsError } = await supabase
         .from('payments')
         .delete()
         .eq('purchase_id', purchaseToDelete.id)
+      
+      console.log('[v0] Payments delete error:', paymentsError)
 
       // Finally delete the purchase
       const { error } = await supabase
