@@ -283,10 +283,13 @@ export default function ClientDetailPage() {
           notes: paymentNotes || null,
         })
 
+      console.log('[v0] Payment insert result - error:', error, 'data:', data)
+      
       if (error) {
         console.error('[v0] Payment error:', error)
         setPaymentError('Error al registrar pago: ' + error.message)
       } else {
+        console.log('[v0] Payment successful, now calculating points...')
         // Recalculate from DB to get accurate totals
         const { data: freshPayments } = await supabase
           .from('payments')
