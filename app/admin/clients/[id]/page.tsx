@@ -346,11 +346,13 @@ export default function ClientDetailPage() {
 
           console.log('[v0] Profile fetch:', profileData, 'Error:', profileFetchError)
 
+          // Update client points balance using SECURITY DEFINER function
           const newBalance = (profileData?.points_balance || 0) + pointsForThisPayment
           const { error: profileUpdateError } = await supabase
-            .from('profiles')
-            .update({ points_balance: newBalance })
-            .eq('id', clientId)
+            .rpc('update_client_points', {
+              client_id: clientId,
+              points_amount: newBalance
+            })
 
           console.log('[v0] Profile update to', newBalance, 'Error:', profileUpdateError)
         }
