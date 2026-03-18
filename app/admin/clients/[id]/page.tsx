@@ -147,6 +147,7 @@ export default function ClientDetailPage() {
       return
     }
 
+    console.log('[v0] Loaded profile with points_balance:', profile.points_balance)
     setClient(profile)
 
     // Get all purchases with payments
@@ -274,7 +275,7 @@ export default function ClientDetailPage() {
     try {
       const supabase = createClient()
 
-      const { error } = await supabase
+      const { data: paymentData, error } = await supabase
         .from('payments')
         .insert({
           purchase_id: selectedPurchase.id,
@@ -282,8 +283,9 @@ export default function ClientDetailPage() {
           payment_method: paymentMethod,
           notes: paymentNotes || null,
         })
+        .select()
 
-      console.log('[v0] Payment insert result - error:', error, 'data:', data)
+      console.log('[v0] Payment insert result - error:', error, 'data:', paymentData)
       
       if (error) {
         console.error('[v0] Payment error:', error)
