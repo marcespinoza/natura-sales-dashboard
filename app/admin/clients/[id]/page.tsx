@@ -350,8 +350,8 @@ export default function ClientDetailPage() {
           const newBalance = (profileData?.points_balance || 0) + pointsForThisPayment
           const { error: profileUpdateError } = await supabase
             .rpc('update_client_points', {
-              client_id: clientId,
-              points_amount: newBalance
+              p_client_id: clientId,
+              p_new_balance: newBalance
             })
 
           console.log('[v0] Profile update to', newBalance, 'Error:', profileUpdateError)
@@ -394,7 +394,7 @@ export default function ClientDetailPage() {
 
       // Use SECURITY DEFINER function to delete purchase and all related records
       const { error } = await supabase
-        .rpc('delete_purchase_cascade', { purchase_id: purchaseToDelete.id })
+        .rpc('delete_purchase_cascade', { p_purchase_id: purchaseToDelete.id })
 
       if (error) {
         console.error('[v0] Delete error:', error)
