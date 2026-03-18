@@ -1,6 +1,6 @@
-import { updateSession } from '@/lib/supabase/proxy'
+import { updateSession } from '@/lib/supabase/middleware'
 
-export async function middleware(request) {
+export async function middleware(request: Request) {
   return await updateSession(request)
 }
 
