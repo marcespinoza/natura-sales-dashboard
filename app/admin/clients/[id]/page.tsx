@@ -392,23 +392,9 @@ export default function ClientDetailPage() {
     try {
       const supabase = createClient()
 
-      // First delete related points_ledger records
-      await supabase
-        .from('points_ledger')
-        .delete()
-        .eq('purchase_id', purchaseToDelete.id)
-
-      // Then delete related payments
-      await supabase
-        .from('payments')
-        .delete()
-        .eq('purchase_id', purchaseToDelete.id)
-
-      // Finally delete the purchase
+      // Use SECURITY DEFINER function to delete purchase and all related records
       const { error } = await supabase
-        .from('purchases')
-        .delete()
-        .eq('id', purchaseToDelete.id)
+        .rpc('delete_purchase_cascade', { purchase_id: purchaseToDelete.id })
 
       if (error) {
         console.error('[v0] Delete error:', error)
