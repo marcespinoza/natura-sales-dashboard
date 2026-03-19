@@ -63,19 +63,17 @@ export default function ProfilePage() {
     if (!user) return
 
     const { error } = await supabase
-      .from('profiles')
-      .update({
-        full_name: fullName,
-        phone: phone || null,
-        address: address || null,
-        updated_at: new Date().toISOString(),
+      .rpc('update_own_profile', {
+        p_full_name: fullName,
+        p_phone: phone || null,
+        p_address: address || null,
       })
-      .eq('id', user.id)
 
     setIsSaving(false)
 
     if (error) {
-      toast.error('Error al actualizar perfil')
+      console.error('[v0] Profile update error:', error)
+      toast.error('Error al actualizar perfil: ' + error.message)
     } else {
       toast.success('Perfil actualizado correctamente')
       router.refresh()
