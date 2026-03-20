@@ -4,6 +4,9 @@ Un sistema completo de gestión de clientes con programa de puntos de lealtad, c
 
 ## Características Principales
 
+<img width="1650" height="848" alt="image" src="https://github.com/user-attachments/assets/9bc43fae-523e-47a3-b709-94edc17233ad" />
+
+
 ### 🎯 Gestión de Clientes
 - Panel de administración para gestionar clientes
 - Registro y perfil de clientes
