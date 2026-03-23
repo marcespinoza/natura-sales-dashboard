@@ -34,16 +34,23 @@ export default async function DashboardLayout({
     .or(`recipient_id.eq.${user.id},is_global.eq.true`)
     .eq('is_read', false)
 
+  // Get catalog URL from settings
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('catalog_url')
+    .single()
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader 
         user={user} 
         profile={profile} 
-        unreadCount={unreadCount || 0} 
+        unreadCount={unreadCount || 0}
+        catalogUrl={settings?.catalog_url || null}
       />
       <div className="flex">
         <DashboardNav />
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-4 lg:p-6">
           {children}
         </main>
       </div>
