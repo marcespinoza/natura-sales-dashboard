@@ -40,6 +40,8 @@ export default async function DashboardLayout({
     .select('catalog_url')
     .single()
 
+  console.log('[v0] Settings fetched:', settings)
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader 
