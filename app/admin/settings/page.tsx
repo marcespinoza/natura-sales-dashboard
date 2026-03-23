@@ -167,6 +167,20 @@ export default function AdminSettingsPage() {
       toast.error('Error al guardar configuración: ' + error.message)
     } else {
       toast.success('Configuración guardada correctamente')
+      // Reload settings after successful save
+      const { data: settingsData } = await supabase
+        .from('settings')
+        .select('*')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+
+      if (settingsData) {
+        setPointsPercentage(settingsData.points_percentage || 10)
+        setPointsExpirationDays(settingsData.points_expiration_days || 365)
+        setPointsRedemptionEnabled(settingsData.points_redemption_enabled !== false)
+        setCatalogUrl(settingsData.catalog_url || '')
+      }
     }
   }
 
