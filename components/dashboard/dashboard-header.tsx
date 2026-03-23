@@ -31,8 +31,6 @@ export function DashboardHeader({ user, profile, unreadCount, catalogUrl }: Dash
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  console.log('[v0] DashboardHeader catalogUrl:', catalogUrl)
-
   const initials = profile?.full_name
     ? profile.full_name
         .split(' ')
