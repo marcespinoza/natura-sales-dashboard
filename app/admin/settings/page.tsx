@@ -126,16 +126,40 @@ export default function AdminSettingsPage() {
 
     setIsSavingSettings(true)
 
-    const { error } = await supabase
+    // First check if settings exist
+    const { data: existingSettings } = await supabase
       .from('settings')
-      .upsert({
-        id: 1,
-        points_percentage: pointsPercentage,
-        points_expiration_days: pointsExpirationDays,
-        points_redemption_enabled: pointsRedemptionEnabled,
-        catalog_url: catalogUrl || null,
-        updated_at: new Date().toISOString(),
-      })
+      .select('id')
+      .limit(1)
+      .single()
+
+    let error
+    if (existingSettings?.id) {
+      // Update existing settings
+      const result = await supabase
+        .from('settings')
+        .update({
+          points_percentage: pointsPercentage,
+          points_expiration_days: pointsExpirationDays,
+          points_redemption_enabled: pointsRedemptionEnabled,
+          catalog_url: catalogUrl || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingSettings.id)
+      error = result.error
+    } else {
+      // Insert new settings
+      const result = await supabase
+        .from('settings')
+        .insert({
+          points_percentage: pointsPercentage,
+          points_expiration_days: pointsExpirationDays,
+          points_redemption_enabled: pointsRedemptionEnabled,
+          catalog_url: catalogUrl || null,
+          updated_at: new Date().toISOString(),
+        })
+      error = result.error
+    }
 
     setIsSavingSettings(false)
 
