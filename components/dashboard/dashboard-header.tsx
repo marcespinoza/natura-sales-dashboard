@@ -67,11 +67,10 @@ export function DashboardHeader({ user, profile, unreadCount, catalogUrl }: Dash
               href={catalogUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-primary/30 rounded-md px-3 py-1.5 hover:bg-primary/5"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-primary/30 rounded-md px-2.5 py-1.5 hover:bg-primary/5 whitespace-nowrap"
             >
-              <ExternalLink className="h-3.5 w-3.5" />
-              <span className="hidden xs:inline">Visita el catálogo</span>
-              <span className="xs:hidden">Catálogo</span>
+              <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+              <span>Visita el catálogo</span>
             </a>
           )}
         </div>
