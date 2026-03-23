@@ -18,15 +18,16 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { NotificationBell } from '@/components/dashboard/notification-bell'
 import { createClient } from '@/lib/supabase/client'
-import { LogOut, User as UserIcon, Settings } from 'lucide-react'
+import { LogOut, User as UserIcon, Settings, ExternalLink } from 'lucide-react'
 
 interface DashboardHeaderProps {
   user: User
   profile: Profile | null
   unreadCount: number
+  catalogUrl?: string | null
 }
 
-export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderProps) {
+export function DashboardHeader({ user, profile, unreadCount, catalogUrl }: DashboardHeaderProps) {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
@@ -50,7 +51,7 @@ export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderP
   return (
     <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Image
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cropped-Logo-Natura-Biobelleza-2024-Oficial-dB54NmgfKX3QjQp0Ag8JUrAzTGOnJU.png"
@@ -61,6 +62,18 @@ export function DashboardHeader({ user, profile, unreadCount }: DashboardHeaderP
             />
             <span className="text-lg font-semibold hidden sm:inline-block">Natura</span>
           </Link>
+          {catalogUrl && (
+            <a
+              href={catalogUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-primary/30 rounded-md px-3 py-1.5 hover:bg-primary/5"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              <span className="hidden xs:inline">Visita el catálogo</span>
+              <span className="xs:hidden">Catálogo</span>
+            </a>
+          )}
         </div>
 
         <div className="flex items-center gap-3">

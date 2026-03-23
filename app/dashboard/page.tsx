@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ShoppingBag, CreditCard, Award, AlertCircle, ExternalLink } from 'lucide-react'
+import { ShoppingBag, CreditCard, Award, AlertCircle } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/format'
 import { PaymentStatusBadge } from '@/components/dashboard/payment-status-badge'
 import Link from 'next/link'
@@ -14,12 +14,6 @@ export default async function DashboardPage() {
   if (!user) {
     redirect('/auth/login')
   }
-
-  // Get catalog URL from settings
-  const { data: settings } = await supabase
-    .from('settings')
-    .select('catalog_url')
-    .single()
 
   // Get user profile with points
   const { data: profile } = await supabase
@@ -71,28 +65,8 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* Catalog Link */}
-      {settings?.catalog_url && (
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6">
-            <div>
-              <h3 className="font-semibold">Explora nuestro catálogo</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Visualiza todos nuestros productos disponibles
-              </p>
-            </div>
-            <Button asChild size="lg" className="shrink-0">
-              <a href={settings.catalog_url} target="_blank" rel="noopener noreferrer">
-                Visita el catálogo
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Gastado</CardTitle>
