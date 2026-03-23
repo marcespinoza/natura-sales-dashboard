@@ -50,6 +50,7 @@ export default function AdminSettingsPage() {
   const [pointsPercentage, setPointsPercentage] = useState(10)
   const [pointsExpirationDays, setPointsExpirationDays] = useState(365)
   const [pointsRedemptionEnabled, setPointsRedemptionEnabled] = useState(true)
+  const [catalogUrl, setCatalogUrl] = useState('')
   const [isSavingSettings, setIsSavingSettings] = useState(false)
 
   // Admin management
@@ -103,6 +104,7 @@ export default function AdminSettingsPage() {
         setPointsPercentage(settingsData.points_percentage || 10)
         setPointsExpirationDays(settingsData.points_expiration_days || 365)
         setPointsRedemptionEnabled(settingsData.points_redemption_enabled !== false)
+        setCatalogUrl(settingsData.catalog_url || '')
       }
       
       setIsLoading(false)
@@ -131,6 +133,7 @@ export default function AdminSettingsPage() {
         points_percentage: pointsPercentage,
         points_expiration_days: pointsExpirationDays,
         points_redemption_enabled: pointsRedemptionEnabled,
+        catalog_url: catalogUrl || null,
         updated_at: new Date().toISOString(),
       })
 
@@ -393,6 +396,20 @@ export default function AdminSettingsPage() {
           </div>
 
           <div className="border-t pt-6 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="catalogUrl">URL del Catálogo</Label>
+              <Input
+                id="catalogUrl"
+                type="url"
+                value={catalogUrl}
+                onChange={(e) => setCatalogUrl(e.target.value)}
+                placeholder="https://ejemplo.com/catalogo"
+              />
+              <p className="text-sm text-muted-foreground">
+                Los clientes verán un enlace a este catálogo en su página de inicio
+              </p>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="expiration">Días de Expiración de Puntos</Label>
               <Input
