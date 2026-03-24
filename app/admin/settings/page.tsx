@@ -127,15 +127,18 @@ export default function AdminSettingsPage() {
     setIsSavingSettings(true)
 
     // First check if settings exist
-    const { data: existingSettings } = await supabase
+    const { data: existingSettings, error: fetchError } = await supabase
       .from('settings')
       .select('id')
       .limit(1)
-      .single()
+      .maybeSingle()
+
+    console.log('[v0] Existing settings:', existingSettings, 'Error:', fetchError)
 
     let error
     if (existingSettings?.id) {
       // Update existing settings
+      console.log('[v0] Updating settings with id:', existingSettings.id)
       const result = await supabase
         .from('settings')
         .update({
@@ -146,9 +149,11 @@ export default function AdminSettingsPage() {
           updated_at: new Date().toISOString(),
         })
         .eq('id', existingSettings.id)
+      console.log('[v0] Update result:', result)
       error = result.error
     } else {
       // Insert new settings
+      console.log('[v0] Inserting new settings')
       const result = await supabase
         .from('settings')
         .insert({
@@ -158,27 +163,36 @@ export default function AdminSettingsPage() {
           catalog_url: catalogUrl || null,
           updated_at: new Date().toISOString(),
         })
+      console.log('[v0] Insert result:', result)
       error = result.error
     }
 
     setIsSavingSettings(false)
 
     if (error) {
+      console.log('[v0] Save error:', error)
       toast.error('Error al guardar configuración: ' + error.message)
     } else {
       toast.success('Configuración guardada correctamente')
+      console.log('[v0] Settings saved successfully, reloading...')
       // Reload settings after successful save
-      const { data: settingsData } = await supabase
+      const { data: settingsData, error: reloadError } = await supabase
         .from('settings')
         .select('*')
         .limit(1)
         .maybeSingle()
 
+      console.log('[v0] Reloaded settings:', settingsData, 'Error:', reloadError)
+
       if (settingsData) {
+        console.log('[v0] Updating state with:', settingsData)
         setPointsPercentage(settingsData.points_percentage || 10)
         setPointsExpirationDays(settingsData.points_expiration_days || 365)
         setPointsRedemptionEnabled(settingsData.points_redemption_enabled !== false)
         setCatalogUrl(settingsData.catalog_url || '')
+        console.log('[v0] State updated, catalogUrl is now:', settingsData.catalog_url)
+      } else {
+        console.log('[v0] No settings data returned after reload')
       }
     }
   }
