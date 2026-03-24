@@ -126,6 +126,8 @@ export default function AdminSettingsPage() {
 
     setIsSavingSettings(true)
 
+    console.log('[v0] SAVING - catalogUrl value is:', catalogUrl, 'length:', catalogUrl?.length)
+
     // First check if settings exist
     const { data: existingSettings, error: fetchError } = await supabase
       .from('settings')
