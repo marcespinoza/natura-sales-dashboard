@@ -171,7 +171,6 @@ export default function AdminSettingsPage() {
       const { data: settingsData } = await supabase
         .from('settings')
         .select('*')
-        .order('created_at', { ascending: true })
         .limit(1)
         .maybeSingle()
 
